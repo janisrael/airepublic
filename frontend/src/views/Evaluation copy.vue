@@ -556,6 +556,8 @@
 </template>
 
 <script>
+import { getApiUrl } from '@/config/api';
+
 export default {
   name: 'EvaluationView',
   data() {
@@ -648,11 +650,11 @@ export default {
     async fetchEvaluations() {
       try {
         // First, get training jobs to see what models we have
-        const trainingResponse = await fetch('http://localhost:5000/api/training-jobs');
+        const trainingResponse = await fetch(getApiUrl('training-jobs'));
         const trainingResult = await trainingResponse.json();
         
         // Then get existing evaluations
-        const evalResponse = await fetch('http://localhost:5000/api/evaluations');
+        const evalResponse = await fetch(getApiUrl('evaluations'));
         const evalResult = await evalResponse.json();
         
         if (trainingResult.success && evalResult.success) {
@@ -712,7 +714,7 @@ export default {
     
     async fetchDatasets() {
       try {
-        const response = await fetch('http://localhost:5000/api/datasets');
+        const response = await fetch(getApiUrl('datasets'));
         const result = await response.json();
         
         if (result.success) {
@@ -801,7 +803,7 @@ export default {
     async loadRealEvaluations() {
       try {
         // Load training jobs as evaluations
-        const response = await fetch('http://localhost:5000/api/training-jobs');
+        const response = await fetch(getApiUrl('training-jobs'));
         const result = await response.json();
         
         if (result.success) {

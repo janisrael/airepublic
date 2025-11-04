@@ -18,7 +18,7 @@ def load_python_dataset() -> Dict[str, Any]:
     
     # Get sample data
     sample_data = []
-    for i in range(min(100, len(ds['train']))):  # Get first 100 samples
+    for i in range(len(ds['train'])):  # Get ALL samples for large-scale usage
         sample = ds['train'][i]
         sample_data.append({
             'id': f'python-{i}',
@@ -45,7 +45,7 @@ def load_javascript_dataset() -> Dict[str, Any]:
         ds = load_dataset('axay/javascript-dataset')
         
         sample_data = []
-        for i in range(min(100, len(ds['train']))):
+        for i in range(len(ds['train'])):  # Get ALL samples for large-scale usage
             sample = ds['train'][i]
             sample_data.append({
                 'id': f'js-{i}',
@@ -213,31 +213,58 @@ def check_and_convert_dataset_format(sample_data: List[Dict[str, Any]]) -> Dict[
     
     for sample in sample_data:
         # Try to find instruction-like and output-like fields
-        instruction_fields = ['text', 'input', 'prompt', 'question']
-        output_fields = ['response', 'answer', 'reference_answer', 'code', 'solution']
+        instruction_fields = ['text', 'input', 'prompt', 'question', 'func', 'function', 'code', 'source_code']
+        output_fields = ['response', 'answer', 'reference_answer', 'code', 'solution', 'target', 'expected', 'result']
         
         instruction = ''
         output = ''
         
+        # First, try to find instruction fields
         for field in instruction_fields:
             if field in sample and sample[field]:
                 instruction = str(sample[field])
                 break
         
+        # Then, try to find output fields
         for field in output_fields:
             if field in sample and sample[field]:
                 output = str(sample[field])
                 break
         
-        if instruction or output:
+        # Special handling for code datasets with func/target pattern
+        if 'func' in sample and 'target' in sample:
+            instruction = f"Analyze and understand this code:\n\n{sample.get('func', '')}"
+            output = str(sample.get('target', ''))
+        # Special handling for datasets with function and expected result
+        elif 'function' in sample and 'expected' in sample:
+            instruction = f"Execute this function and provide the expected result:\n\n{sample.get('function', '')}"
+            output = str(sample.get('expected', ''))
+        # Special handling for code and solution pattern
+        elif 'code' in sample and 'solution' in sample:
+            instruction = f"Solve this coding problem:\n\n{sample.get('code', '')}"
+            output = str(sample.get('solution', ''))
+        
+        # If we still don't have both instruction and output, try to use any available text fields
+        if not instruction and not output:
+            # Use the first non-empty text field as instruction
+            for key, value in sample.items():
+                if isinstance(value, str) and value.strip() and key not in ['id', 'type', 'source', 'project', 'commit_id']:
+                    if not instruction:
+                        instruction = f"Process this {key}:\n\n{value}"
+                    elif not output:
+                        output = str(value)
+                        break
+        
+        # Only create a sample if we have at least an instruction
+        if instruction:
             converted_sample = {
                 'id': sample.get('id', ''),
                 'instruction': instruction,
-                'output': output,
+                'output': output or 'No output available',
                 'input': '',
                 'system': '',
                 'source': sample.get('source', ''),
-                'type': sample.get('type', 'Text')
+                'type': sample.get('type', 'Code' if 'func' in sample or 'code' in sample else 'Text')
             }
             converted_samples.append(converted_sample)
     

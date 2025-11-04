@@ -1,0 +1,357 @@
+[
+  {
+    "name": "markdown_generator",
+    "category": "Content",
+    "description": "Generate clean markdown documentation"
+  },
+  {
+    "name": "style_adapter",
+    "category": "Content",
+    "description": "Adapt writing style to match user preferences"
+  },
+  {
+    "name": "grammar_checker",
+    "category": "Content",
+    "description": "Check grammar and language quality"
+  },
+  {
+    "name": "plagiarism_detector",
+    "category": "Content",
+    "description": "Detect plagiarism and ensure originality"
+  },
+  {
+    "name": "story_generator",
+    "category": "Creative",
+    "description": "Generate creative stories and narratives"
+  },
+  {
+    "name": "mood_analyzer",
+    "category": "Creative",
+    "description": "Analyze emotional tone and mood"
+  },
+  {
+    "name": "creative_prompts",
+    "category": "Creative",
+    "description": "Generate creative prompts and ideas"
+  },
+  {
+    "name": "style_transfer",
+    "category": "Creative",
+    "description": "Transfer artistic styles to content"
+  },
+  {
+    "name": "language_detector",
+    "category": "Translation",
+    "description": "Detect and identify languages"
+  },
+  {
+    "name": "translation_engine",
+    "category": "Translation",
+    "description": "Multi-language translation engine"
+  },
+  {
+    "name": "cultural_adapter",
+    "category": "Translation",
+    "description": "Adapt content for cultural context"
+  },
+  {
+    "name": "pronunciation_guide",
+    "category": "Translation",
+    "description": "Provide pronunciation guidance"
+  },
+  {
+    "name": "chroma_search",
+    "category": "Data",
+    "description": "Vector database search and retrieval"
+  },
+  {
+    "name": "sql_connector",
+    "category": "Data",
+    "description": "Database connection and query execution"
+  },
+  {
+    "name": "data_cleaner",
+    "category": "Data",
+    "description": "Clean and preprocess datasets"
+  },
+  {
+    "name": "chart_generator",
+    "category": "Data",
+    "description": "Generate data visualizations and charts"
+  },
+  {
+    "name": "web_search",
+    "category": "Research",
+    "description": "Real-time web information retrieval"
+  },
+  {
+    "name": "fact_checker",
+    "category": "Research",
+    "description": "Verify facts and information accuracy"
+  },
+  {
+    "name": "source_validator",
+    "category": "Research",
+    "description": "Validate source credibility"
+  },
+  {
+    "name": "knowledge_synthesizer",
+    "category": "Research",
+    "description": "Synthesize and summarize information"
+  },
+  {
+    "name": "calculator_engine",
+    "category": "Math",
+    "description": "Advanced mathematical computations"
+  },
+  {
+    "name": "statistical_analyzer",
+    "category": "Math",
+    "description": "Statistical analysis and modeling"
+  },
+  {
+    "name": "equation_solver",
+    "category": "Math",
+    "description": "Solve complex mathematical equations"
+  },
+  {
+    "name": "graph_plotter",
+    "category": "Math",
+    "description": "Plot mathematical graphs and visualizations"
+  },
+  {
+    "name": "file_writer",
+    "category": "Development",
+    "description": "Create and modify files"
+  },
+  {
+    "name": "folder_manager",
+    "category": "Development",
+    "description": "Manage directory structures"
+  },
+  {
+    "name": "code_generator",
+    "category": "Development",
+    "description": "Generate application code"
+  },
+  {
+    "name": "docker_tool",
+    "category": "Development",
+    "description": "Build and manage Docker containers"
+  },
+  {
+    "name": "error_analyzer",
+    "category": "Debug",
+    "description": "Analyze and identify errors"
+  },
+  {
+    "name": "performance_profiler",
+    "category": "Debug",
+    "description": "Profile code performance"
+  },
+  {
+    "name": "code_optimizer",
+    "category": "Debug",
+    "description": "Optimize code for better performance"
+  },
+  {
+    "name": "security_scanner",
+    "category": "Debug",
+    "description": "Scan for security vulnerabilities"
+  },
+  {
+    "name": "deployment_manager",
+    "category": "DevOps",
+    "description": "Manage application deployments"
+  },
+  {
+    "name": "monitoring_tool",
+    "category": "DevOps",
+    "description": "Monitor system performance"
+  },
+  {
+    "name": "backup_manager",
+    "category": "DevOps",
+    "description": "Manage data backups"
+  },
+  {
+    "name": "scaling_advisor",
+    "category": "DevOps",
+    "description": "Provide scaling recommendations"
+  },
+  {
+    "name": "openai_adapter",
+    "category": "Integration",
+    "description": "OpenAI API integration"
+  },
+  {
+    "name": "anthropic_adapter",
+    "category": "Integration",
+    "description": "Anthropic API integration"
+  },
+  {
+    "name": "nvidia_adapter",
+    "category": "Integration",
+    "description": "NVIDIA API integration"
+  },
+  {
+    "name": "huggingface_adapter",
+    "category": "Integration",
+    "description": "Hugging Face API integration"
+  },
+  {
+    "name": "email_manager",
+    "category": "Communication",
+    "description": "Manage email communications"
+  },
+  {
+    "name": "sms_sender",
+    "category": "Communication",
+    "description": "Send SMS messages"
+  },
+  {
+    "name": "social_media_poster",
+    "category": "Communication",
+    "description": "Post to social media platforms"
+  },
+  {
+    "name": "notification_system",
+    "category": "Communication",
+    "description": "Send multi-channel notifications"
+  },
+  {
+    "name": "calendar_manager",
+    "category": "Scheduling",
+    "description": "Manage calendars and events"
+  },
+  {
+    "name": "task_scheduler",
+    "category": "Scheduling",
+    "description": "Schedule and manage tasks"
+  },
+  {
+    "name": "reminder_system",
+    "category": "Scheduling",
+    "description": "Create and manage reminders"
+  },
+  {
+    "name": "meeting_planner",
+    "category": "Scheduling",
+    "description": "Plan and coordinate meetings"
+  },
+  {
+    "name": "test_runner",
+    "category": "Testing",
+    "description": "Run unit and integration tests"
+  },
+  {
+    "name": "consistency_checker",
+    "category": "Testing",
+    "description": "Check output consistency"
+  },
+  {
+    "name": "report_generator",
+    "category": "Testing",
+    "description": "Generate test reports"
+  },
+  {
+    "name": "vulnerability_scanner",
+    "category": "Security",
+    "description": "Scan for security vulnerabilities"
+  },
+  {
+    "name": "encryption_manager",
+    "category": "Security",
+    "description": "Manage data encryption"
+  },
+  {
+    "name": "compliance_checker",
+    "category": "Security",
+    "description": "Check regulatory compliance"
+  },
+  {
+    "name": "audit_logger",
+    "category": "Security",
+    "description": "Log security audit events"
+  },
+  {
+    "name": "lesson_planner",
+    "category": "Education",
+    "description": "Plan educational lessons"
+  },
+  {
+    "name": "quiz_generator",
+    "category": "Education",
+    "description": "Generate quizzes and assessments"
+  },
+  {
+    "name": "progress_tracker",
+    "category": "Education",
+    "description": "Track learning progress"
+  },
+  {
+    "name": "knowledge_assessor",
+    "category": "Education",
+    "description": "Assess knowledge gaps"
+  },
+  {
+    "name": "layout_generator",
+    "category": "Design",
+    "description": "Generate UI layouts"
+  },
+  {
+    "name": "color_palette_creator",
+    "category": "Design",
+    "description": "Create color palettes"
+  },
+  {
+    "name": "ui_mockup_tool",
+    "category": "Design",
+    "description": "Create UI mockups"
+  },
+  {
+    "name": "accessibility_checker",
+    "category": "Design",
+    "description": "Check accessibility compliance"
+  },
+  {
+    "name": "business_analyzer",
+    "category": "Business",
+    "description": "Analyze business processes"
+  },
+  {
+    "name": "strategy_planner",
+    "category": "Business",
+    "description": "Plan business strategies"
+  },
+  {
+    "name": "risk_assessor",
+    "category": "Business",
+    "description": "Assess business risks"
+  },
+  {
+    "name": "market_researcher",
+    "category": "Business",
+    "description": "Research market trends"
+  },
+  {
+    "name": "symptom_analyzer",
+    "category": "Health",
+    "description": "Analyze health symptoms"
+  },
+  {
+    "name": "wellness_tracker",
+    "category": "Health",
+    "description": "Track health and wellness"
+  },
+  {
+    "name": "medication_reminder",
+    "category": "Health",
+    "description": "Manage medication reminders"
+  },
+  {
+    "name": "health_educator",
+    "category": "Health",
+    "description": "Provide health education"
+  }
+]

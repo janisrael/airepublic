@@ -1,0 +1,433 @@
+[
+  {
+    "name": "Writer Spirit",
+    "category": "Content & Creativity",
+    "description": "Content generation, documentation, summaries",
+    "icon": "✍️",
+    "unlock_rank": "Novice",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "markdown_generator",
+      "style_adapter",
+      "grammar_checker",
+      "plagiarism_detector"
+    ],
+    "synergies": {
+      "Creative Spirit": 25,
+      "Translator Spirit": 20,
+      "Educator Spirit": 15
+    },
+    "conflicts": {
+      "Mathematician Spirit": -10
+    },
+    "is_active": true
+  },
+  {
+    "name": "Creative Spirit",
+    "category": "Content & Creativity",
+    "description": "Artistic content, storytelling, ideation",
+    "icon": "🎨",
+    "unlock_rank": "Novice",
+    "unlock_level": 3,
+    "max_spirit_level": 10,
+    "tools": [
+      "story_generator",
+      "mood_analyzer",
+      "creative_prompts",
+      "style_transfer"
+    ],
+    "synergies": {
+      "Writer Spirit": 25,
+      "Designer Spirit": 30,
+      "Educator Spirit": 20
+    },
+    "conflicts": {
+      "Analyst Spirit": -15,
+      "Security Spirit": -10
+    },
+    "is_active": true
+  },
+  {
+    "name": "Translator Spirit",
+    "category": "Content & Creativity",
+    "description": "Multi-language translation, localization",
+    "icon": "🌍",
+    "unlock_rank": "Skilled",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "language_detector",
+      "translation_engine",
+      "cultural_adapter",
+      "pronunciation_guide"
+    ],
+    "synergies": {
+      "Writer Spirit": 20,
+      "Communicator Spirit": 25,
+      "Researcher Spirit": 15
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "Analyst Spirit",
+    "category": "Data & Analysis",
+    "description": "Data analysis, RAG operations, insights",
+    "icon": "📊",
+    "unlock_rank": "Novice",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "chroma_search",
+      "sql_connector",
+      "data_cleaner",
+      "chart_generator"
+    ],
+    "synergies": {
+      "Researcher Spirit": 30,
+      "Mathematician Spirit": 25,
+      "Security Spirit": 15,
+      "Checker Spirit": 20
+    },
+    "conflicts": {
+      "Creative Spirit": -15,
+      "Healer Spirit": -5
+    },
+    "is_active": true
+  },
+  {
+    "name": "Researcher Spirit",
+    "category": "Data & Analysis",
+    "description": "Web research, fact-checking, information gathering",
+    "icon": "🔍",
+    "unlock_rank": "Novice",
+    "unlock_level": 2,
+    "max_spirit_level": 10,
+    "tools": [
+      "web_search",
+      "fact_checker",
+      "source_validator",
+      "knowledge_synthesizer"
+    ],
+    "synergies": {
+      "Analyst Spirit": 30,
+      "Writer Spirit": 20,
+      "Translator Spirit": 15
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "Mathematician Spirit",
+    "category": "Data & Analysis",
+    "description": "Mathematical computations, statistical analysis",
+    "icon": "🧮",
+    "unlock_rank": "Skilled",
+    "unlock_level": 2,
+    "max_spirit_level": 10,
+    "tools": [
+      "calculator_engine",
+      "statistical_analyzer",
+      "equation_solver",
+      "graph_plotter"
+    ],
+    "synergies": {
+      "Analyst Spirit": 25,
+      "Builder Spirit": 20,
+      "Checker Spirit": 15
+    },
+    "conflicts": {
+      "Writer Spirit": -10,
+      "Creative Spirit": -12
+    },
+    "is_active": true
+  },
+  {
+    "name": "Builder Spirit",
+    "category": "Development & Technical",
+    "description": "Code generation, infrastructure, automation",
+    "icon": "🛠️",
+    "unlock_rank": "Novice",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "file_writer",
+      "folder_manager",
+      "code_generator",
+      "docker_tool"
+    ],
+    "synergies": {
+      "Debugger Spirit": 20,
+      "DevOps Spirit": 25,
+      "Checker Spirit": 20,
+      "Mathematician Spirit": 20
+    },
+    "conflicts": {
+      "Security Spirit": -10,
+      "Creative Spirit": -5
+    },
+    "is_active": true
+  },
+  {
+    "name": "Debugger Spirit",
+    "category": "Development & Technical",
+    "description": "Code debugging, error analysis, optimization",
+    "icon": "🐛",
+    "unlock_rank": "Skilled",
+    "unlock_level": 3,
+    "max_spirit_level": 10,
+    "tools": [
+      "error_analyzer",
+      "performance_profiler",
+      "code_optimizer",
+      "security_scanner"
+    ],
+    "synergies": {
+      "Builder Spirit": 20,
+      "Security Spirit": 20,
+      "Checker Spirit": 20,
+      "Analyst Spirit": 15
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "DevOps Spirit",
+    "category": "Development & Technical",
+    "description": "Infrastructure, deployment, monitoring",
+    "icon": "⚙️",
+    "unlock_rank": "Specialist",
+    "unlock_level": 2,
+    "max_spirit_level": 10,
+    "tools": [
+      "deployment_manager",
+      "monitoring_tool",
+      "backup_manager",
+      "scaling_advisor"
+    ],
+    "synergies": {
+      "Builder Spirit": 25,
+      "Scheduler Spirit": 20,
+      "Security Spirit": 15,
+      "Analyst Spirit": 15
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "Connector Spirit",
+    "category": "Integration & Communication",
+    "description": "External API integrations, LLM providers",
+    "icon": "🌐",
+    "unlock_rank": "Novice",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "openai_adapter",
+      "anthropic_adapter",
+      "nvidia_adapter",
+      "huggingface_adapter"
+    ],
+    "synergies": {
+      "Builder Spirit": 25,
+      "Scheduler Spirit": 15,
+      "Analyst Spirit": 20
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "Communicator Spirit",
+    "category": "Integration & Communication",
+    "description": "Email, messaging, social media, notifications",
+    "icon": "💬",
+    "unlock_rank": "Skilled",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "email_manager",
+      "sms_sender",
+      "social_media_poster",
+      "notification_system"
+    ],
+    "synergies": {
+      "Scheduler Spirit": 20,
+      "Translator Spirit": 25,
+      "Creative Spirit": 25,
+      "Writer Spirit": 20
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "Scheduler Spirit",
+    "category": "Integration & Communication",
+    "description": "Calendar management, task scheduling, reminders",
+    "icon": "📅",
+    "unlock_rank": "Skilled",
+    "unlock_level": 2,
+    "max_spirit_level": 10,
+    "tools": [
+      "calendar_manager",
+      "task_scheduler",
+      "reminder_system",
+      "meeting_planner"
+    ],
+    "synergies": {
+      "DevOps Spirit": 20,
+      "Communicator Spirit": 20,
+      "Builder Spirit": 15,
+      "Analyst Spirit": 15
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "Checker Spirit",
+    "category": "Quality & Validation",
+    "description": "Validation, quality assurance, testing",
+    "icon": "✅",
+    "unlock_rank": "Novice",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "grammar_checker",
+      "test_runner",
+      "consistency_checker",
+      "report_generator"
+    ],
+    "synergies": {
+      "Security Spirit": 25,
+      "Builder Spirit": 20,
+      "Analyst Spirit": 20,
+      "Debugger Spirit": 20
+    },
+    "conflicts": {},
+    "is_active": true
+  },
+  {
+    "name": "Security Spirit",
+    "category": "Quality & Validation",
+    "description": "Security analysis, vulnerability scanning, compliance",
+    "icon": "🔒",
+    "unlock_rank": "Specialist",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "vulnerability_scanner",
+      "encryption_manager",
+      "compliance_checker",
+      "audit_logger"
+    ],
+    "synergies": {
+      "Checker Spirit": 25,
+      "Analyst Spirit": 15,
+      "Debugger Spirit": 20,
+      "DevOps Spirit": 15
+    },
+    "conflicts": {
+      "Builder Spirit": -10,
+      "Creative Spirit": -10
+    },
+    "is_active": true
+  },
+  {
+    "name": "Educator Spirit",
+    "category": "Specialized & Advanced",
+    "description": "Teaching, tutoring, learning path creation",
+    "icon": "📚",
+    "unlock_rank": "Expert",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "lesson_planner",
+      "quiz_generator",
+      "progress_tracker",
+      "knowledge_assessor"
+    ],
+    "synergies": {
+      "Writer Spirit": 15,
+      "Creative Spirit": 20,
+      "Designer Spirit": 20,
+      "Communicator Spirit": 15
+    },
+    "conflicts": {
+      "Consultant Spirit": -5
+    },
+    "is_active": true
+  },
+  {
+    "name": "Designer Spirit",
+    "category": "Specialized & Advanced",
+    "description": "UI/UX design, visual content, layout optimization",
+    "icon": "🎨",
+    "unlock_rank": "Expert",
+    "unlock_level": 2,
+    "max_spirit_level": 10,
+    "tools": [
+      "layout_generator",
+      "color_palette_creator",
+      "ui_mockup_tool",
+      "accessibility_checker"
+    ],
+    "synergies": {
+      "Creative Spirit": 30,
+      "Educator Spirit": 20,
+      "Builder Spirit": 15
+    },
+    "conflicts": {
+      "Builder Spirit": -5
+    },
+    "is_active": true
+  },
+  {
+    "name": "Consultant Spirit",
+    "category": "Specialized & Advanced",
+    "description": "Business advice, strategy planning, decision support",
+    "icon": "💼",
+    "unlock_rank": "Master",
+    "unlock_level": 1,
+    "max_spirit_level": 10,
+    "tools": [
+      "business_analyzer",
+      "strategy_planner",
+      "risk_assessor",
+      "market_researcher"
+    ],
+    "synergies": {
+      "Analyst Spirit": 20,
+      "Communicator Spirit": 15,
+      "Scheduler Spirit": 15,
+      "Researcher Spirit": 15
+    },
+    "conflicts": {
+      "Educator Spirit": -5
+    },
+    "is_active": true
+  },
+  {
+    "name": "Healer Spirit",
+    "category": "Specialized & Advanced",
+    "description": "Health analysis, wellness advice, medical information",
+    "icon": "🩺",
+    "unlock_rank": "Master",
+    "unlock_level": 2,
+    "max_spirit_level": 10,
+    "tools": [
+      "symptom_analyzer",
+      "wellness_tracker",
+      "medication_reminder",
+      "health_educator"
+    ],
+    "synergies": {
+      "Educator Spirit": 20,
+      "Communicator Spirit": 15,
+      "Scheduler Spirit": 15
+    },
+    "conflicts": {
+      "Analyst Spirit": -5
+    },
+    "is_active": true
+  }
+]

@@ -1,0 +1,76 @@
+# AI Republic Coding Rules
+
+## Database Requirements
+
+### CRITICAL: PostgreSQL Only - NO SQLite
+- **NEVER use SQLite** in any part of the AI Republic project
+- **ALWAYS use PostgreSQL** as the primary database
+- **ALWAYS use SQLAlchemy** for database operations
+- All database connections must use PostgreSQL with proper connection pooling
+- Database URLs must follow PostgreSQL format: `postgresql://user:password@host:port/database`
+
+### Database Configuration
+- Use environment variables for database configuration:
+  - `POSTGRES_HOST` (default: 127.0.0.1)
+  - `POSTGRES_PORT` (default: 5432)
+  - `POSTGRES_DB` (default: ai_republic_spirits)
+  - `POSTGRES_USER` (default: ai_republic)
+  - `POSTGRES_PASSWORD` (default: password)
+
+### SQLAlchemy Best Practices
+- Use SQLAlchemy ORM for all database operations
+- Implement proper connection pooling
+- Use database migrations for schema changes
+- Always handle database connection errors gracefully
+- Use transactions for multi-step operations
+
+## Core Principles
+- Keep code DRY (Don't Repeat Yourself) and modular
+- Write clear, consistent coding style according to the project's language standards
+- Add comments when logic is not obvious or could be misinterpreted
+- Prefer creating new code rather than modifying working existing code, unless necessary
+- Always handle exceptions and errors carefully; include meaningful logging for debugging and tracing
+- Think carefully about potential bugs or edge cases before committing code
+- **NEVER use dummy/fake/simulated data in code - only use real data or show clear errors**
+
+## Pre-Coding Guidelines
+- Before starting a coding session, or if unsure about project details, analyze `.md` files in the `/docs` folder for guidance
+- Plan your code structure and dependencies before writing significant new functionality
+
+## Logging & Tracing
+- Use logging frameworks (e.g., `logging` in Python, `winston` in Node.js) for all runtime info, warnings, and errors
+- Trace execution for complex logic and potential failure points
+- Include context-rich messages in logs to help reproduce and debug issues
+- Avoid silent failures; always capture and report errors when possible
+
+## Environment & Process Management
+- Always start the project using the provided `start.sh` script:
+  - This script detects and kills zombie processes (Python/frontend/backend) and frees required ports
+  - It checks GPU health before starting processes to avoid slowdowns
+  - It ensures that both backend and frontend run from the correct project base directory
+  - Always open a new terminal when running the script
+- Never run backend/frontend directly in a random directory; always use the `start.sh` workflow
+- Regularly review `start.sh` to ensure compatibility with new dependencies or changes in project structure
+
+## Testing & Review
+- Write unit tests for critical functions or modules
+- Use meaningful variable and function names for readability
+- Review code changes carefully before committing; consider edge cases and maintainability
+
+## Frontend Vue Rules
+- Use component-based structure, never large single files
+- If a file has too much code, create a new file and import it
+- Always follow the structure ui pattern from `/dashboard` page
+- Always check and align with design template in `frontend/dist/neumorphism-ui-bootstrap` before creating or modifying frontend code
+- Centralize CSS or create feature-specific CSS modules
+- Use only icons (https://codepen.io/Partical/full/PoqBYdx), never emojis
+- Keep components reusable and atomic
+
+## Global Coding Rules
+- Keep code DRY (Don't Repeat Yourself) and modular
+- Write clear, consistent coding style according to the project's language standards
+- Add comments when logic is not obvious or could be misinterpreted
+- Prefer creating new code rather than modifying working existing code, unless necessary
+- Always handle exceptions and errors carefully; include meaningful logging for debugging and tracing
+- Think carefully about potential bugs or edge cases before committing code
+- **NEVER use dummy/fake/simulated data in code - only use real data or show clear errors**

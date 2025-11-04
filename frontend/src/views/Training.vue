@@ -5,10 +5,16 @@
         <h1>Model Training</h1>
         <p>Train and fine-tune your AI models</p>
       </div>
-      <button class="btn btn-primary" @click="startNewTraining">
-        <Icon name="play_arrow" size="sm" color="light" />
-        New Training
-      </button>
+      <div class="header-actions">
+        <button class="btn btn-secondary" @click="openExternalTrainingModal">
+          <Icon name="smart_toy" size="sm" color="light" />
+          Refine Minion
+        </button>
+        <button class="btn btn-primary" @click="startNewTraining">
+          <Icon name="play_arrow" size="sm" color="light" />
+          New Training
+        </button>
+      </div>
     </div>
 
     <!-- Training Summary Cards -->
@@ -18,7 +24,7 @@
           <Icon name="model_training" size="lg" color="primary" />
         </div>
         <div class="card-content">
-          <h3>{{ trainingJobs.length }}</h3>
+          <h3>{{ totalJobsCount }}</h3>
           <p>Total Jobs</p>
         </div>
       </div>
@@ -98,7 +104,7 @@
             <span class="model-modified">{{ model.modified }}</span>
           </div>
           <div class="capability-models">
-            <span v-for="capability in model.capabilities" :key="capability" class="model-tag">
+            <span v-for="capability in getCapabilitiesArray(model.capabilities)" :key="capability" class="model-tag">
               {{ capability }}
             </span>
           </div>
@@ -106,101 +112,48 @@
       </div>
     </div>
 
-    <!-- Training Jobs -->
-    <div class="training-jobs">
-      <div class="section-header">
-        <h2>Training Jobs</h2>
-      </div>
+    <!-- Training Switch -->
+    <TrainingSwitch v-model="activeTrainingTab" />
 
+    <!-- Local Training Section -->
+    <div v-if="activeTrainingTab === 'local'" class="local-training-section">
+      <div class="section-header">
+        <h2>🏠 Local Training</h2>
+        <p>Train models on your local Ollama instance</p>
+      </div>
+      
       <div class="jobs-grid">
-        <div v-for="job in trainingJobs" :key="job.id" class="job-card">
+        <!-- Local Training Jobs -->
+        <div v-for="job in trainingJobs" :key="`local-${job.id}`" class="job-card">
           <div class="job-header">
             <h3>{{ getJobDisplayName(job) }}</h3>
-            <span class="job-status" :class="job.status.toLowerCase()">
-              {{ job.status }}
-            </span>
-          </div>
-          
-          <!-- Simple Progress Status -->
-          <div class="job-progress" v-if="job.status === 'RUNNING'">
-            <div class="loading-spinner"></div>
-            <span>Training in progress...</span>
-          </div>
-          <div class="job-progress error" v-else-if="job.status === 'FAILED'">
-            <span class="error-icon">❌</span>
-            <span>Training failed</span>
-          </div>
-          <div class="job-progress success" v-else-if="job.status === 'COMPLETED'">
-            <span class="success-icon">✅</span>
-            <span>Training completed!</span>
-          </div>
-          
-          <div class="job-details">
-            <div class="job-metadata" v-if="job.description || job.jobType || job.maker || job.version || job.baseModel">
-              <div class="metadata-row" v-if="job.baseModel">
-                <span class="metadata-label">Base Model:</span>
-                <span class="metadata-value">{{ job.baseModel }}</span>
-              </div>
-              <div class="metadata-row" v-if="job.description">
-                <span class="metadata-label">Description:</span>
-                <span class="metadata-value">{{ job.description }}</span>
-              </div>
-              <div class="metadata-row" v-if="job.jobType">
-                <span class="metadata-label">Type:</span>
-                <span class="metadata-value">{{ job.jobType }}</span>
-              </div>
-              <div class="metadata-row" v-if="job.maker">
-                <span class="metadata-label">Maker:</span>
-                <span class="metadata-value">{{ job.maker }}</span>
-              </div>
-              <div class="metadata-row" v-if="job.version">
-                <span class="metadata-label">Version:</span>
-                <span class="metadata-value">{{ job.version }}</span>
-              </div>
-              <div class="metadata-row" v-if="job.modelName">
-                <span class="metadata-label">Output Model:</span>
-                <span class="metadata-value model-file">{{ job.modelName }}</span>
-              </div>
-            </div>
-            <p class="job-description">{{ job.description || 'No description provided' }}</p>
-            <div class="job-capabilities">
-              <span v-for="capability in job.capabilities" :key="capability" class="capability-tag">
-                {{ capability }}
+            <div class="job-badges">
+              <span class="job-badge local">Local</span>
+              <span class="job-status" :class="job.status.toLowerCase()">
+                {{ job.status }}
               </span>
             </div>
-            <p class="dataset-info">{{ job.datasetName }}</p>
-            <!-- <div class="job-metrics" v-if="job.metrics">
-              <div class="metric-item">
-                <span class="metric-label">Accuracy:</span>
-                <span class="metric-value">{{ job.metrics.accuracy }}%</span>
-              </div>
-              <div class="metric-item" v-if="job.metrics.debuggingScore">
-                <span class="metric-label">Debugging:</span>
-                <span class="metric-value">{{ job.metrics.debuggingScore }}%</span>
-              </div>
-              <div class="metric-item" v-if="job.metrics.reasoningScore">
-                <span class="metric-label">Reasoning:</span>
-                <span class="metric-value">{{ job.metrics.reasoningScore }}%</span>
-              </div>
-              <div class="metric-item" v-if="job.metrics.codeGenScore">
-                <span class="metric-label">Code Gen:</span>
-                <span class="metric-value">{{ job.metrics.codeGenScore }}%</span>
-              </div>
-              <div class="metric-item" v-if="job.metrics.planningScore">
-                <span class="metric-label">Planning:</span>
-                <span class="metric-value">{{ job.metrics.planningScore }}%</span>
-              </div>
-            </div> -->
-          </div>
-          <div class="job-actions">
-            <button class="btn-icon" @click="viewJobDetails(job)">👁️</button>
-            <button class="btn-icon btn-start" @click="startTraining(job.id)" v-if="job.status === 'PENDING'">▶️</button>
-            <button class="btn-icon btn-stop" @click="stopTraining(job.id)" v-if="job.status === 'RUNNING'">⏹️</button>
-            <button class="btn-icon" @click="deleteJob(job.id)">🗑️</button>
           </div>
         </div>
       </div>
     </div>
+
+        <!-- Minion Refinement Section -->
+        <MinionTrainingSection 
+          v-else-if="activeTrainingTab === 'external'"
+          ref="minionTrainingSection"
+          :pending-jobs="pendingJobs"
+          @view-history="handleViewHistory"
+          @upgrade-minion="handleUpgradeMinion"
+          @create-minion="handleCreateMinion"
+          @view-pending-job="handleViewPendingJob"
+          @start-pending-training="handleStartPendingTraining"
+          @delete-pending-job="handleDeletePendingJob"
+          @training-completed="handleTrainingCompleted"
+        />
+
+
+    <!-- OLD EXTERNAL TRAINING JOBS - REMOVED AND REPLACED WITH NEW COMPONENTS -->
 
     <!-- New Training Modal -->
     <div v-if="showTrainingModal" class="modal-overlay" @click.self="showTrainingModal = false">
@@ -546,24 +499,78 @@
       :currentJob="selectedJob" 
       @status-changed="handleStatusChange"
     />
+
+    <!-- External Training Modal -->
+    <ExternalTrainingModal
+      ref="externalTrainingModal"
+      :showModal="showExternalTrainingModal"
+      :availableMinions="availableMinions"
+      :availableDatasets="availableDatasets"
+      :initialData="newExternalTraining"
+      @close="closeExternalTrainingModal"
+      @create-training="createExternalTrainingJob"
+    />
+
+    <!-- Minion History Modal -->
+    <!-- Minion History previously shown as modal; now navigate to dedicated page -->
+
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteConfirmModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Confirm Delete</h2>
+          <button class="btn-icon" @click="cancelDeletePendingJob">✕</button>
+        </div>
+        <div class="modal-body">
+          <p v-if="deleteTargetJob">Are you sure you want to delete the training job
+            <strong>"{{ deleteTargetJob.job_name || deleteTargetJob.jobName || 'Unnamed' }}"</strong>?</p>
+          <p v-if="deleteTargetJob">This will remove the job record and associated resources (knowledge base, artifacts).</p>
+          <div v-if="deleteTargetJob" class="job-metadata">
+            <div class="metadata-row"><span class="metadata-label">Minion:</span><span class="metadata-value">{{ deleteTargetJob.minion_name || deleteTargetJob.minionName || deleteTargetJob.minionId }}</span></div>
+            <div class="metadata-row"><span class="metadata-label">Type:</span><span class="metadata-value">{{ deleteTargetJob.training_type || deleteTargetJob.type || deleteTargetJob.jobType }}</span></div>
+            <div class="metadata-row"><span class="metadata-label">Created:</span><span class="metadata-value">{{ formatDate(deleteTargetJob.created_at || deleteTargetJob.createdAt) }}</span></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" @click="cancelDeletePendingJob">Cancel</button>
+          <button class="btn btn-danger" @click="confirmDeletePendingJob">Confirm Delete</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Icon from '../components/Icon.vue';
 import TrainingOutput from '../components/TrainingOutput.vue';
+import ExternalTrainingModal from '../components/ExternalTrainingModal.vue';
+import MinionHistory from '../components/MinionHistory.vue';
+import TrainingSwitch from '../components/TrainingSwitch.vue';
+import MinionTrainingSection from '../components/MinionTrainingSection.vue';
 import { io } from 'socket.io-client';
+import { useAuthStore } from '../stores/auth';
+import { API_ENDPOINTS, getUserApiUrl, getApiUrl } from '@/config/api';
+import '../assets/minion_training.css';
 export default {
   name: 'TrainingView',
   components: {
     Icon,
-    TrainingOutput
+    TrainingOutput,
+    ExternalTrainingModal,
+    MinionHistory,
+    TrainingSwitch,
+    MinionTrainingSection
   },
   data() {
     return {
+      activeTrainingTab: 'external', // Default to external as requested
       showTrainingModal: false,
+      showExternalTrainingModal: false,
+      showMinionHistory: false,
+      selectedMinionForHistory: null,
       uploadedFiles: [],
       availableDatasets: [],
+      availableMinions: [],
       ollamaModels: [],
       newTraining: {
         jobName: '',
@@ -598,9 +605,31 @@ export default {
           topK: 4
         }
       },
+      newExternalTraining: {
+        jobName: '',
+        description: '',
+        minionId: null,
+        provider: '',
+        model: '',
+        type: 'rag',
+        selectedDatasets: [],
+        roleDefinition: '',
+        temperature: 0.7,
+        top_p: 0.9,
+        max_tokens: 1024,
+        ragConfig: {
+          chunkSize: 1000,
+          topK: 4
+        }
+      },
       trainingJobs: [],
+      externalTrainingJobs: [],
       chromadbCollections: 0,
-      selectedJob: null
+      selectedJob: null,
+      authStore: useAuthStore(),
+      statusPollingInterval: null
+      ,showDeleteConfirmModal: false,
+      deleteTargetJob: null
     };
   },
   computed: {
@@ -624,33 +653,363 @@ export default {
       }, 0);
     },
     runningJobsCount() {
-      return this.trainingJobs.filter(job => job.status === 'RUNNING').length;
+      const localRunning = this.trainingJobs.filter(job => job.status === 'RUNNING').length;
+      const externalRunning = this.externalTrainingJobs.filter(job => job.status === 'RUNNING').length;
+      return localRunning + externalRunning;
     },
     completedJobsCount() {
-      return this.trainingJobs.filter(job => job.status === 'COMPLETED').length;
+      const localCompleted = this.trainingJobs.filter(job => job.status === 'COMPLETED').length;
+      const externalCompleted = this.externalTrainingJobs.filter(job => job.status === 'COMPLETED').length;
+      return localCompleted + externalCompleted;
     },
     failedJobsCount() {
-      return this.trainingJobs.filter(job => job.status === 'FAILED').length;
+      const localFailed = this.trainingJobs.filter(job => job.status === 'FAILED').length;
+      const externalFailed = this.externalTrainingJobs.filter(job => job.status === 'FAILED').length;
+      return localFailed + externalFailed;
+    },
+    totalJobsCount() {
+      return this.trainingJobs.length + this.externalTrainingJobs.length;
+    },
+    pendingJobs() {
+      return this.externalTrainingJobs.filter(job => job.status === 'PENDING');
     }
   },
   methods: {
+    // New component event handlers
+    handleViewHistory(minion) {
+      console.log('📊 View history for minion:', minion);
+      this.selectedMinionForHistory = {
+        id: minion.id,
+        name: minion.display_name
+      };
+      console.log('📊 selectedMinionForHistory set to:', this.selectedMinionForHistory);
+      this.showMinionHistory = true;
+      console.log('📊 showMinionHistory set to:', this.showMinionHistory);
+    },
+
+    handleUpgradeMinion(minion) {
+      console.log('🔄 Upgrade minion:', minion);
+      
+      // Parse the latest training config to get previous settings
+      let previousConfig = {};
+      if (minion.latest_training?.config) {
+        try {
+          previousConfig = typeof minion.latest_training.config === 'string' 
+            ? JSON.parse(minion.latest_training.config) 
+            : minion.latest_training.config;
+        } catch (e) {
+          console.warn('Failed to parse previous config:', e);
+        }
+      }
+      
+      // Determine if this is a LoRA upgrade based on training type
+      const latestTrainingType = minion.latest_training?.training_type || 'lora';
+      const isLoRAUpgrade = latestTrainingType === 'lora' || latestTrainingType === 'EXTERNAL_LORA';
+      
+      // For LoRA upgrades: start fresh (no datasets needed for style enhancement)
+      // For RAG/Hybrid upgrades: filter selectedDatasets to only include datasets that still exist
+      const validDatasets = [];
+      if (!isLoRAUpgrade && previousConfig.selectedDatasets) {
+        validDatasets.push(...previousConfig.selectedDatasets.filter(id => 
+          this.availableDatasets.some(dataset => dataset.id === id)
+        ));
+      }
+      
+      // Pre-fill the external training modal with minion data from latest training
+      this.newExternalTraining = {
+        jobName: isLoRAUpgrade 
+          ? `${minion.display_name} Style Refinement`
+          : `${minion.display_name} v${this.getNextVersion(minion)}`,
+        description: isLoRAUpgrade
+          ? `Enhance ${minion.display_name}'s personality and communication style`
+          : (minion.latest_training?.description || `Upgrade ${minion.display_name} with additional training`),
+        minionId: minion.id,
+        provider: minion.provider || 'openai',
+        model: minion.latest_training?.model_name || minion.name || 'gpt-4o-mini',
+        type: isLoRAUpgrade ? 'lora' : (minion.latest_training?.training_type || 'rag'),
+        selectedDatasets: validDatasets, // Only include valid datasets
+        roleDefinition: previousConfig.roleDefinition || `I am ${minion.display_name}, an advanced AI assistant.`,
+        temperature: previousConfig.temperature || 0.7,
+        top_p: previousConfig.top_p || 0.9,
+        max_tokens: previousConfig.max_tokens || 1024,
+        ragConfig: {
+          chunkSize: previousConfig.ragConfig?.chunkSize || 1000,
+          topK: previousConfig.ragConfig?.topK || 4
+        },
+        loraConfig: {
+          styleSensitivity: previousConfig.loraConfig?.styleSensitivity || 0.7,
+          enhancementIntensity: previousConfig.loraConfig?.enhancementIntensity || 1.0,
+          selectedTraits: previousConfig.loraConfig?.selectedTraits || []
+        }
+      };
+      
+      console.log('📝 Pre-filled training data:', this.newExternalTraining);
+      this.showExternalTrainingModal = true;
+      
+      // Only show dataset cleanup notice for non-LoRA upgrades
+      if (!isLoRAUpgrade && previousConfig.selectedDatasets && validDatasets.length !== previousConfig.selectedDatasets.length) {
+        const removedCount = previousConfig.selectedDatasets.length - validDatasets.length;
+        console.log(`🧹 Upgraded ${minion.display_name}: Cleared ${removedCount} unavailable datasets`);
+        // alert(`Upgrade Notice: Cleared ${removedCount} unavailable dataset(s) from previous training. Please select current datasets.`);
+      }
+      
+      // Force populate the modal after it opens
+      this.$nextTick(() => {
+        if (this.$refs.externalTrainingModal) {
+          console.log('📝 Calling populateForm on modal ref');
+          this.$refs.externalTrainingModal.populateForm(this.newExternalTraining);
+        }
+      });
+    },
+
+    handleCreateMinion() {
+      console.log('➕ Create new minion');
+      // Navigate to minion creation or open modal
+      this.$router.push('/models');
+    },
+
+    handleViewPendingJob(job) {
+      console.log('👁️ View pending job:', job);
+      // Show job details in a modal or expand the card
+      alert(`Viewing pending job: ${job.job_name}\nStatus: ${job.status}\nCreated: ${job.created_at}`);
+    },
+
+    handleStartPendingTraining(job) {
+      console.log('🚀 Start pending training:', job);
+      // Show the training overlay on the minion card immediately when user clicks Train
+      const minionCardRef = this.$refs.minionTrainingSection?.$refs[`minionCard-${job.minionId}`];
+      if (minionCardRef && minionCardRef[0]) {
+        minionCardRef[0].startTrainingProgress(job.id);
+      }
+
+      // Then call API to start the training in the background
+      this.startTraining(job.id, job.minionId);
+    },
+
+    handleDeletePendingJob(job) {
+      // Open custom confirmation modal instead of browser confirm()
+      console.log('🗑️ Prompt delete pending job (modal):', job);
+      this.deleteTargetJob = job;
+      this.showDeleteConfirmModal = true;
+    },
+
+    async handleTrainingCompleted(minionId) {
+      console.log('🎉 Training completed for minion:', minionId);
+      // Refresh external training jobs to update pendingJobs computed property
+      await this.fetchExternalTrainingJobs();
+      // Refresh minions to update latest_training info
+      await this.refreshMinions();
+    },
+
+    cancelDeletePendingJob() {
+      this.deleteTargetJob = null;
+      this.showDeleteConfirmModal = false;
+    },
+
+    async confirmDeletePendingJob() {
+      if (!this.deleteTargetJob) return;
+      const jobId = this.deleteTargetJob.id;
+      try {
+        // Call delete without the built-in confirm prompt
+        await this.deleteTraining(jobId, true);
+        // Close modal and refresh minions/jobs to update UI (will show View History / Upgrade)
+        this.showDeleteConfirmModal = false;
+        this.deleteTargetJob = null;
+        await this.fetchExternalTrainingJobs();
+        await this.refreshMinions();
+      } catch (err) {
+        console.error('Error confirming delete:', err);
+        this.showError('Failed to delete job: ' + (err.message || String(err)));
+      }
+    },
+
+    getNextVersion(minion) {
+      // Extract version from latest training job name
+      const latestJobName = minion.latest_training.job_name;
+      const versionMatch = latestJobName.match(/v(\d+\.\d+)/);
+      if (versionMatch) {
+        const currentVersion = parseFloat(versionMatch[1]);
+        return (currentVersion + 0.1).toFixed(1);
+      }
+      return '1.1';
+    },
+
+    // Pending jobs methods
+    getDatasetNames(config) {
+      if (!config) return 'No datasets';
+      try {
+        const parsed = typeof config === 'string' ? JSON.parse(config) : config;
+        if (parsed.datasetNames && Array.isArray(parsed.datasetNames)) {
+          return parsed.datasetNames.map(d => d.name).join(', ');
+        }
+        return 'Unknown datasets';
+      } catch (e) {
+        return 'Invalid config';
+      }
+    },
+
+    formatDate(dateString) {
+      return new Date(dateString).toLocaleDateString() + ' ' + new Date(dateString).toLocaleTimeString();
+    },
+
+    async startTraining(jobId, minionId = null) {
+      try {
+        console.log('🚀 Starting training job:', jobId);
+
+        const response = await fetch(`${API_ENDPOINTS.v2.trainingJobs}/${jobId}/start`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          console.log('✅ Training started successfully');
+
+          // Start real-time progress polling for this specific job
+          this.startProgressPolling(jobId);
+
+          // If a minion card ref was provided, tell the card to show connecting state
+          if (minionId && this.$refs.minionTrainingSection) {
+            const minionCardRef = this.$refs.minionTrainingSection.$refs[`minionCard-${minionId}`];
+            if (minionCardRef && minionCardRef[0]) {
+              // Tell card to show connecting first, then overlay after confirmed by status
+              minionCardRef[0].setConnecting(true);
+            }
+          }
+
+          // Refresh the jobs list
+          await this.fetchTrainingJobs();
+          // Restart status polling since we now have a running job
+          this.startStatusPolling();
+        } else {
+          console.error('❌ Failed to start training:', result.error);
+          alert('Failed to start training: ' + result.error);
+        }
+      } catch (error) {
+        console.error('❌ Error starting training:', error);
+        alert('Error starting training: ' + (error.message || String(error)));
+      }
+    },
+
+    startProgressPolling(jobId) {
+      console.log('🔄 Starting progress polling for job:', jobId);
+      
+      // Poll every 2 seconds for progress updates
+      const pollInterval = setInterval(async () => {
+        try {
+          const response = await fetch(getUserApiUrl(this.authStore.user.id, `external-training/jobs/${jobId}`), {
+            headers: {
+              'Authorization': `Bearer ${this.authStore.token}`
+            }
+          });
+          
+          if (response.ok) {
+            const job = await response.json();
+            console.log('📊 Job progress:', job);
+            
+            // Update the specific minion card with progress
+            const minionCardRef = this.$refs.minionTrainingSection?.$refs[`minionCard-${job.minion_id}`];
+            if (minionCardRef && minionCardRef[0]) {
+              minionCardRef[0].updateTrainingProgress(job);
+            }
+            
+            // Stop polling if job is completed or failed
+            if (job.status === 'COMPLETED' || job.status === 'FAILED') {
+              clearInterval(pollInterval);
+              console.log('✅ Progress polling stopped - job finished');
+              
+              // Refresh the jobs list to show final status
+              await this.fetchExternalTrainingJobs();
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error polling job progress:', error);
+          clearInterval(pollInterval);
+        }
+      }, 2000);
+      
+      // Store the interval ID for cleanup
+      this.progressPollingIntervals = this.progressPollingIntervals || {};
+      this.progressPollingIntervals[jobId] = pollInterval;
+    },
+
+    async deleteTraining(jobId, skipConfirm = false) {
+      if (!skipConfirm) {
+        if (!confirm('Are you sure you want to delete this training job?')) {
+          return;
+        }
+      }
+
+      try {
+        console.log('🗑️ Deleting training job:', jobId);
+        const response = await fetch(`${API_ENDPOINTS.v2.trainingJobs}/${jobId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          console.log('✅ Training job deleted successfully');
+          // Refresh the jobs list
+          await this.fetchExternalTrainingJobs();
+          // Also refresh minions so cards update
+          await this.refreshMinions();
+        } else {
+          console.error('❌ Failed to delete training job:', result.error);
+          alert('Failed to delete training job: ' + result.error);
+        }
+      } catch (error) {
+        console.error('❌ Error deleting training job:', error);
+        alert('Error deleting training job: ' + error.message);
+      }
+    },
+
     initializeSocket() {
-      // Connect to Socket.IO server
-      this.socket = io('http://localhost:5000');
+      // Socket.IO disabled - using simple status polling instead
+      console.log('📊 Socket.IO disabled - using status polling for training jobs');
+    },
+    
+    startStatusPolling() {
+      // Stop existing polling if any
+      this.stopStatusPolling();
       
-      // Listen for real-time training progress updates
-      this.socket.on('training_progress', (data) => {
-        console.log('📊 Real-time training progress:', data);
-        this.updateTrainingProgress(data);
-      });
+      // Poll for status updates every 30 seconds (reduced frequency)
+      this.statusPollingInterval = setInterval(async () => {
+        const hasRunningTrainingJobs = this.trainingJobs.some(job => job.status === 'RUNNING');
+        const hasRunningExternalJobs = this.externalTrainingJobs.some(job => job.status === 'RUNNING');
+        
+        if (hasRunningTrainingJobs || hasRunningExternalJobs) {
+          console.log('🔄 Polling for training job status updates...');
+          
+          // Only fetch what's actually needed
+          if (hasRunningTrainingJobs) {
+            await this.fetchTrainingJobs();
+          }
+          if (hasRunningExternalJobs) {
+            await this.fetchExternalTrainingJobs();
+          }
+        } else {
+          // No running jobs, stop polling to save resources
+          console.log('⏸️ No running jobs detected, stopping status polling');
+          this.stopStatusPolling();
+        }
+      }, 30000); // Poll every 30 seconds (was 10 seconds)
       
-      this.socket.on('connect', () => {
-        console.log('🔌 Connected to Socket.IO server');
-      });
-      
-      this.socket.on('disconnect', () => {
-        console.log('🔌 Disconnected from Socket.IO server');
-      });
+      console.log('▶️ Status polling started');
+    },
+    
+    stopStatusPolling() {
+      if (this.statusPollingInterval) {
+        clearInterval(this.statusPollingInterval);
+        this.statusPollingInterval = null;
+        console.log('🛑 Status polling stopped');
+      }
     },
     
     updateTrainingProgress(data) {
@@ -680,12 +1039,21 @@ export default {
     async fetchAvailableDatasets() {
       try {
         console.log('Fetching available datasets for training...');
-        const response = await fetch('http://localhost:5000/api/datasets');
-        const result = await response.json();
         
-        if (result.success) {
-          // Transform database format to frontend format
-          this.availableDatasets = result.datasets.map(dataset => ({
+        // Fetch both global and user datasets
+        const [globalResponse, userResponse] = await Promise.all([
+          fetch(API_ENDPOINTS.v2.datasets),
+          fetch(getUserApiUrl(this.authStore.user.id, 'datasets'))
+        ]);
+        
+        const globalResult = await globalResponse.json();
+        const userResult = await userResponse.json();
+        
+        let allDatasets = [];
+        
+        // Add global datasets
+        if (globalResult.success) {
+          const globalDatasets = globalResult.datasets.map(dataset => ({
             id: dataset.id.toString(),
             name: dataset.name,
             description: dataset.description,
@@ -699,13 +1067,39 @@ export default {
             format: dataset.format,
             license: dataset.license,
             datasetId: dataset.dataset_id,
-            source: dataset.source
+            source: dataset.source,
+            isGlobal: true,
+            category: 'Global'
           }));
-          
-          console.log(`Loaded ${this.availableDatasets.length} datasets for training`);
-        } else {
-          console.error('Failed to fetch datasets:', result.error);
+          allDatasets.push(...globalDatasets);
         }
+        
+        // Add user datasets
+        if (userResult.success) {
+          const userDatasets = userResult.datasets.map(dataset => ({
+            id: dataset.id.toString(),
+            name: dataset.name,
+            description: dataset.description,
+            type: dataset.type,
+            sampleCount: dataset.sample_count,
+            createdAt: dataset.created_at,
+            tags: dataset.tags || [],
+            isFavorite: Boolean(dataset.is_favorite),
+            lastModified: dataset.last_modified,
+            size: dataset.size,
+            format: dataset.format,
+            license: dataset.license,
+            datasetId: dataset.dataset_id,
+            source: dataset.source,
+            isGlobal: false,
+            category: 'My Datasets'
+          }));
+          allDatasets.push(...userDatasets);
+        }
+        
+        this.availableDatasets = allDatasets;
+        console.log(`Loaded ${allDatasets.length} datasets for training (${globalResult.datasets?.length || 0} global, ${userResult.datasets?.length || 0} user)`);
+        
       } catch (error) {
         console.error('Error fetching datasets:', error);
         // Don't show error to user, just log it
@@ -714,7 +1108,7 @@ export default {
     async fetchTrainingJobs() {
       try {
         console.log('Fetching training jobs from API...');
-        const response = await fetch('http://localhost:5000/api/training-jobs');
+        const response = await fetch(API_ENDPOINTS.v2.trainingJobs);
         const result = await response.json();
         
         if (result.success) {
@@ -742,15 +1136,30 @@ export default {
           
           console.log(`Loaded ${this.trainingJobs.length} training jobs from API`);
           
-          // Check for stuck jobs and auto-detect them
-          await this.detectStuckJobs();
+          // Check for stuck jobs and auto-detect them only if there are jobs
+          if (this.trainingJobs.length > 0) {
+            await this.detectStuckJobs();
+          }
         } else {
           console.error('Failed to fetch training jobs:', result.error);
+          this.showErrorMessage(`Failed to fetch training jobs: ${result.error}`);
         }
       } catch (error) {
         console.error('Error fetching training jobs:', error);
-        // Don't show error to user, just log it
+        this.showErrorMessage(`Error fetching training jobs: ${error.message}`);
       }
+    },
+    
+    showErrorMessage(message) {
+      console.error(message);
+      // You can implement toast notifications here
+      alert(`Error: ${message}`);
+    },
+
+    showSuccessMessage(message) {
+      console.log(message);
+      // You can implement toast notifications here
+      alert(`Success: ${message}`);
     },
     
     calculateElapsedTime(startedAt) {
@@ -770,25 +1179,39 @@ export default {
     },
     
     async detectStuckJobs() {
+      // Only detect stuck jobs if there are running jobs
+      const runningJobs = this.trainingJobs.filter(job => job.status === 'RUNNING');
+      if (runningJobs.length === 0) {
+        return; // No running jobs, skip detection
+      }
+      
       try {
-        const response = await fetch('http://localhost:5000/api/detect-stuck-training', {
+        console.log(`Detecting stuck training jobs (${runningJobs.length} running jobs)...`);
+        const response = await fetch(getApiUrl('detect-stuck-training'), {
           method: 'POST'
         });
+        
+        if (!response.ok) {
+          console.warn('Stuck jobs detection endpoint not available:', response.status);
+          return;
+        }
+        
         const result = await response.json();
         
         if (result.success && result.stuck_jobs_found > 0) {
           console.log(`Detected ${result.stuck_jobs_found} stuck training jobs`);
-          // Refresh the training jobs list
-          await this.fetchTrainingJobs();
+          // Update local state instead of refetching to avoid loop
+          // The next polling cycle will refresh the data naturally
         }
       } catch (error) {
         console.error('Error detecting stuck jobs:', error);
+        // Don't show error to user, just log it
       }
     },
     async fetchOllamaModels() {
       try {
         console.log('Fetching Ollama models...');
-        const response = await fetch('http://localhost:5000/api/models');
+        const response = await fetch(API_ENDPOINTS.v2.models);
         const result = await response.json();
         
         if (result.success) {
@@ -834,30 +1257,32 @@ export default {
       return dataset ? dataset.name : 'Unknown Dataset';
     },
     getModelIcon(capabilities) {
-      if (capabilities.includes('Coding') || capabilities.includes('Code Generation')) {
+      const capsArray = this.getCapabilitiesArray(capabilities);
+      if (capsArray.includes('Coding') || capsArray.includes('Code Generation')) {
         return 'code';
-      } else if (capabilities.includes('Reasoning') || capabilities.includes('Mathematics')) {
+      } else if (capsArray.includes('Reasoning') || capsArray.includes('Mathematics')) {
         return 'psychology';
-      } else if (capabilities.includes('Visual Analysis')) {
+      } else if (capsArray.includes('Visual Analysis')) {
         return 'visibility';
-      } else if (capabilities.includes('Planning') || capabilities.includes('Task Management')) {
+      } else if (capsArray.includes('Planning') || capsArray.includes('Task Management')) {
         return 'assignment';
-      } else if (capabilities.includes('Conversation') || capabilities.includes('Instructions')) {
+      } else if (capsArray.includes('Conversation') || capsArray.includes('Instructions')) {
         return 'chat';
       } else {
         return 'smart_toy';
       }
     },
     getModelColor(capabilities) {
-      if (capabilities.includes('Coding') || capabilities.includes('Code Generation')) {
+      const capsArray = this.getCapabilitiesArray(capabilities);
+      if (capsArray.includes('Coding') || capsArray.includes('Code Generation')) {
         return 'success';
-      } else if (capabilities.includes('Reasoning') || capabilities.includes('Mathematics')) {
+      } else if (capsArray.includes('Reasoning') || capsArray.includes('Mathematics')) {
         return 'info';
-      } else if (capabilities.includes('Visual Analysis')) {
+      } else if (capsArray.includes('Visual Analysis')) {
         return 'warning';
-      } else if (capabilities.includes('Planning') || capabilities.includes('Task Management')) {
+      } else if (capsArray.includes('Planning') || capsArray.includes('Task Management')) {
         return 'primary';
-      } else if (capabilities.includes('Conversation') || capabilities.includes('Instructions')) {
+      } else if (capsArray.includes('Conversation') || capsArray.includes('Instructions')) {
         return 'secondary';
       } else {
         return 'light';
@@ -869,7 +1294,8 @@ export default {
     },
     getModelDisplayOption(model) {
       const icon = this.getModelIcon(model.capabilities);
-      const primaryCapability = model.capabilities[0] || 'General';
+      const capsArray = this.getCapabilitiesArray(model.capabilities);
+      const primaryCapability = capsArray[0] || 'General';
       const size = model.size;
       
       // Map icons to emojis for better display
@@ -898,8 +1324,24 @@ export default {
         'Instructions': 'Following complex instructions and task execution'
       };
       
-      const primaryCapability = capabilities[0];
+      const capsArray = this.getCapabilitiesArray(capabilities);
+      const primaryCapability = capsArray[0];
       return descriptions[primaryCapability] || 'General purpose AI model for various tasks';
+    },
+    getCapabilitiesArray(capabilities) {
+      // Handle both string (JSON) and array formats
+      if (!capabilities) return [];
+      if (Array.isArray(capabilities)) return capabilities;
+      if (typeof capabilities === 'string') {
+        try {
+          const parsed = JSON.parse(capabilities);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          // If not valid JSON, treat as comma-separated string
+          return capabilities.split(',').map(c => c.trim()).filter(c => c);
+        }
+      }
+      return [];
     },
     getDatasetSamples(datasetId) {
       const dataset = this.availableDatasets.find(d => d.id === datasetId);
@@ -1001,13 +1443,13 @@ export default {
           formData.append('trainingData', JSON.stringify(trainingData));
           formData.append('avatar', this.newTraining.avatarFile);
           
-          response = await fetch('http://localhost:5000/api/training-jobs', {
+          response = await fetch(API_ENDPOINTS.v2.trainingJobs, {
             method: 'POST',
             body: formData
           });
         } else {
           // Regular JSON request
-          response = await fetch('http://localhost:5000/api/training-jobs', {
+          response = await fetch(API_ENDPOINTS.v2.trainingJobs, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -1139,50 +1581,298 @@ export default {
     startNewTraining() {
       this.showTrainingModal = true;
     },
-    viewJobDetails(job) {
-      // In a real app, this would show detailed job info
-      alert(`Viewing details for job: ${job.modelName}`);
+    
+    openExternalTrainingModal() {
+      this.showExternalTrainingModal = true;
     },
-    async startTraining(jobId) {
+    
+    closeExternalTrainingModal() {
+      this.showExternalTrainingModal = false;
+      // Reset the training data
+      this.newExternalTraining = {
+        jobName: '',
+        description: '',
+        minionId: null,
+        provider: '',
+        model: '',
+        type: 'rag',
+        selectedDatasets: [],
+        roleDefinition: '',
+        temperature: 0.7,
+        top_p: 0.9,
+        max_tokens: 1024,
+        ragConfig: {
+          chunkSize: 1000,
+          topK: 4
+        }
+      };
+    },
+    
+    async createExternalTrainingJob(data) {
       try {
-        console.log(`🚀 Starting real training for job ${jobId}`);
+        if (!this.authStore.token || !this.authStore.user) {
+          alert('Please log in to create training jobs');
+          return;
+        }
         
-        const response = await fetch(`http://localhost:5000/api/start-training`, {
-          method: 'POST',
+        // Check if data contains files (from ExternalTrainingModal with file uploads)
+        const hasFiles = data.files && Array.isArray(data.files) && data.files.length > 0;
+        const trainingData = hasFiles ? data.trainingData : data;
+        
+        let response;
+        
+        if (hasFiles) {
+          // Use FormData when files are present
+          const formData = new FormData();
+          formData.append('trainingData', JSON.stringify(trainingData));
+          
+          // Append each file
+          data.files.forEach((file, index) => {
+            formData.append(`file_${index}`, file);
+          });
+          formData.append('fileCount', data.files.length.toString());
+          
+          response = await fetch(getUserApiUrl(this.authStore.user.id, 'external-training/jobs'), {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${this.authStore.token}`
+              // Don't set Content-Type header - browser will set it with boundary for FormData
+            },
+            body: formData
+          });
+        } else {
+          // Regular JSON request
+          response = await fetch(getUserApiUrl(this.authStore.user.id, 'external-training/jobs'), {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${this.authStore.token}`
+            },
+            body: JSON.stringify(trainingData)
+          });
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // this.showSuccessMessage(`External training job "${trainingData.jobName}" created!`);
+          await this.fetchExternalTrainingJobs();
+          // Refresh minions to show the new pending job
+          await this.refreshMinions();
+        } else {
+          this.showError(result.error || 'Failed to create external training job');
+        }
+      } catch (error) {
+        console.error('Error creating external training job:', error);
+        this.showError('Failed to connect to server. Make sure the API server is running.');
+      }
+    },
+    
+    async refreshMinions() {
+      console.log('🔄 Refreshing minions data...')
+      // Call fetchMinions on the MinionTrainingSection component
+      if (this.$refs.minionTrainingSection) {
+        await this.$refs.minionTrainingSection.fetchMinions()
+      }
+    },
+    
+    async fetchExternalTrainingJobs() {
+      try {
+        if (!this.authStore.token || !this.authStore.user) {
+          console.log('❌ No auth token or user found');
+          return;
+        }
+        
+        console.log('🔍 Fetching external training jobs for user ID:', this.authStore.user.id);
+        const response = await fetch(getUserApiUrl(this.authStore.user.id, 'external-training/jobs'), {
           headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ 
-            job_id: jobId,
-            training_type: this.newTraining.type
-          })
+            'Authorization': `Bearer ${this.authStore.token}`
+          }
         });
         
         const result = await response.json();
         
         if (result.success) {
-          this.showSuccessMessage(`Real training started for job ${jobId}!`);
-          
-          // Set this job as the selected job for the TrainingOutput component
-          const job = this.trainingJobs.find(j => j.id === jobId.toString());
-          if (job) {
-            this.selectedJob = { ...job, status: 'RUNNING' };
-          }
-          
-          // Wait a moment for backend to update status, then refresh
-          setTimeout(() => {
-            this.fetchTrainingJobs();
-          }, 500);
-          
-          // Start polling for progress updates
-          this.startProgressPolling(jobId);
-          
+          console.log('📊 External training jobs API response:', result);
+          this.externalTrainingJobs = result.jobs.map(job => ({
+            id: job.id.toString(),
+            jobName: job.job_name,
+            description: job.description,
+            minionId: job.minion_id,
+            minionName: job.minion_name,
+            provider: job.provider,
+            modelName: job.model_name,
+            trainingType: job.training_type,
+            status: job.status,
+            progress: Math.round(job.progress * 100),
+            errorMessage: job.error_message || null,
+            createdAt: job.created_at,
+            startedAt: job.started_at,
+            completedAt: job.completed_at
+          }));
+          console.log('📊 Mapped external training jobs:', this.externalTrainingJobs);
         } else {
-          this.showError(result.error || 'Failed to start training');
+          console.error('❌ Failed to fetch external training jobs:', result.error);
+        }
+      } catch (error) {
+        console.error('Error fetching external training jobs:', error);
+      }
+    },
+    
+    async fetchAvailableMinions() {
+      try {
+        if (!this.authStore.token || !this.authStore.user) {
+          return;
         }
         
+        console.log('🔍 Fetching available minions for user ID:', this.authStore.user.id);
+        const response = await fetch(getUserApiUrl(this.authStore.user.id, 'minions'), {
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`
+          }
+        });
+        
+        if (!response.ok) {
+          console.warn('Available minions endpoint not available:', response.status);
+          this.availableMinions = [];
+          return;
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          this.availableMinions = result.minions.map(minion => ({
+            id: minion.id,
+            display_name: minion.display_name,
+            provider: minion.provider,
+            description: minion.description,
+            system_prompt: minion.system_prompt
+          }));
+          console.log(`Loaded ${this.availableMinions.length} available minions`);
+        } else {
+          console.error('Failed to fetch available minions:', result.error);
+          this.showErrorMessage(`Failed to fetch available minions: ${result.error}`);
+          this.availableMinions = [];
+        }
       } catch (error) {
-        console.error('Error starting training:', error);
+        console.error('Error fetching available minions:', error);
+        this.showErrorMessage(`Error fetching available minions: ${error.message}`);
+        this.availableMinions = [];
+      }
+    },
+    viewJobDetails(job) {
+      // In a real app, this would show detailed job info
+      alert(`Viewing details for job: ${job.modelName}`);
+    },
+    
+    viewExternalJobDetails(job) {
+      // In a real app, this would show detailed job info
+      alert(`Viewing details for external training job: ${job.jobName}`);
+    },
+    
+    viewMinionHistory(job) {
+      this.selectedMinionForHistory = {
+        id: job.minionId,
+        name: job.minionName
+      };
+      this.showMinionHistory = true;
+    },
+    
+    closeMinionHistory() {
+      this.showMinionHistory = false;
+      this.selectedMinionForHistory = null;
+    },
+    
+    async startExternalTraining(jobId) {
+      try {
+        if (!this.authStore.token || !this.authStore.user) {
+          alert('Please log in to start training');
+          return;
+        }
+        
+        console.log('🚀 Starting external training for job:', jobId);
+        console.log('👤 User:', this.authStore.user);
+        console.log('🔑 Token:', this.authStore.token ? `${this.authStore.token.substring(0, 20)}...` : 'No token');
+        
+        const response = await fetch(getUserApiUrl(this.authStore.user.id, `external-training/jobs/${jobId}/start`), {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          this.showSuccessMessage('External training started!');
+          await this.fetchExternalTrainingJobs();
+          // Restart status polling since we now have a running job
+          this.startStatusPolling();
+        } else {
+          this.showError(result.error || 'Failed to start external training');
+        }
+      } catch (error) {
+        console.error('Error starting external training:', error);
+        this.showError('Failed to connect to server. Make sure the API server is running.');
+      }
+    },
+    
+    async stopExternalTraining(jobId) {
+      try {
+        if (!this.authStore.token || !this.authStore.user) {
+          alert('Please log in to stop training');
+          return;
+        }
+        
+        const response = await fetch(`${getUserApiUrl(this.authStore.user.id, 'external-training/jobs')}/${jobId}/stop`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          this.showSuccessMessage('External training stopped!');
+          await this.fetchExternalTrainingJobs();
+        } else {
+          this.showError(result.error || 'Failed to stop external training');
+        }
+      } catch (error) {
+        console.error('Error stopping external training:', error);
+        this.showError('Failed to connect to server. Make sure the API server is running.');
+      }
+    },
+    
+    async deleteExternalJob(jobId) {
+      if (!confirm('Are you sure you want to delete this external training job?')) {
+        return;
+      }
+      
+      try {
+        if (!this.authStore.token || !this.authStore.user) {
+          alert('Please log in to delete training jobs');
+          return;
+        }
+        
+        const response = await fetch(`${getUserApiUrl(this.authStore.user.id, 'external-training/jobs')}/${jobId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${this.authStore.token}`
+          }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          this.showSuccessMessage('External training job deleted!');
+          await this.fetchExternalTrainingJobs();
+        } else {
+          this.showError(result.error || 'Failed to delete external training job');
+        }
+      } catch (error) {
+        console.error('Error deleting external training job:', error);
         this.showError('Failed to connect to server. Make sure the API server is running.');
       }
     },
@@ -1192,7 +1882,7 @@ export default {
       if (confirm('Stop this training job?')) {
           console.log(`🛑 Stopping training for job ${jobId}`);
           
-          const response = await fetch(`http://localhost:5000/api/training-jobs/${jobId}/stop`, {
+          const response = await fetch(`${API_ENDPOINTS.v2.trainingJobs}/${jobId}/stop`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -1227,7 +1917,7 @@ export default {
       // Poll for progress updates every 5 seconds
       const pollInterval = setInterval(async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/training-jobs/${jobId}/status`);
+          const response = await fetch(`${API_ENDPOINTS.v2.trainingJobs}/${jobId}/status`);
           const result = await response.json();
           
           if (result.success) {
@@ -1292,7 +1982,7 @@ export default {
       
       try {
         // Delete from backend
-        const response = await fetch(`http://localhost:5000/api/training-jobs/${jobId}`, {
+        const response = await fetch(`${API_ENDPOINTS.v2.trainingJobs}/${jobId}`, {
           method: 'DELETE'
         });
         
@@ -1330,35 +2020,33 @@ export default {
     
     async fetchOllamaModels() {
       try {
-        const response = await fetch('http://localhost:5000/api/models');
+        const response = await fetch(API_ENDPOINTS.v2.models);
         const result = await response.json();
         
         if (result.success) {
-          this.ollamaModels = result.models.map(model => ({
-            name: model.name,
-            capabilities: model.capabilities || []
-          }));
+          // Filter to only show Ollama models (not database minions)
+          this.ollamaModels = result.models
+            .filter(model => model.type === 'ollama')
+            .map(model => ({
+              name: model.name,
+              capabilities: model.capabilities || []
+            }));
           console.log('Loaded Ollama models:', this.ollamaModels.length);
         } else {
           console.error('Failed to fetch Ollama models:', result.error);
+          this.showErrorMessage(`Failed to fetch Ollama models: ${result.error}`);
         }
       } catch (error) {
         console.error('Error fetching Ollama models:', error);
+        this.showErrorMessage(`Error fetching Ollama models: ${error.message}`);
       }
     },
     
     async fetchChromaDBCollections() {
       try {
-        const response = await fetch('http://localhost:5000/api/chromadb/collections');
-        const result = await response.json();
-        
-        if (result.success) {
-          this.chromadbCollections = result.total || 0;
-          console.log('ChromaDB collections:', this.chromadbCollections);
-        } else {
-          console.error('Failed to fetch ChromaDB collections:', result.error);
-          this.chromadbCollections = 0;
-        }
+        console.log('ChromaDB collections endpoint not implemented yet');
+        this.chromadbCollections = 0;
+        console.log('ChromaDB collections set to 0 (endpoint not available)');
       } catch (error) {
         console.error('Error fetching ChromaDB collections:', error);
         this.chromadbCollections = 0;
@@ -1367,21 +2055,43 @@ export default {
   },
   
   beforeUnmount() {
-    // Clean up Socket.IO connection
-    if (this.socket) {
-      this.socket.disconnect();
+    // Clean up any polling intervals
+    this.stopStatusPolling();
+    
+    // Clean up progress polling intervals
+    if (this.progressPollingIntervals) {
+      Object.keys(this.progressPollingIntervals).forEach(jobId => {
+        if (this.progressPollingIntervals[jobId]) {
+          clearInterval(this.progressPollingIntervals[jobId]);
+        }
+      });
+      this.progressPollingIntervals = {};
     }
   },
   
   async mounted() {
+    console.log('🚀 Training component mounted');
+    console.log('🔍 Auth store state:', {
+      user: this.authStore.user,
+      token: this.authStore.token ? 'Token exists' : 'No token',
+      isAuthenticated: this.authStore.isAuthenticated
+    });
+    
     // Load available datasets, training jobs, and Ollama models when component mounts
     await this.fetchAvailableDatasets();
     await this.fetchTrainingJobs();
     await this.fetchOllamaModels();
     await this.fetchChromaDBCollections();
     
-    // Initialize Socket.IO connection for real-time updates
+    // Load external training data
+    await this.fetchExternalTrainingJobs();
+    await this.fetchAvailableMinions();
+    
+    // Initialize status polling instead of Socket.IO
     this.initializeSocket();
+    this.startStatusPolling();
+    
+    console.log('✅ Training component initialization complete');
   }
 };
 </script>
@@ -1396,6 +2106,12 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .page-header h1 {
@@ -2384,5 +3100,39 @@ export default {
   border-radius: 0.25rem;
   color: var(--primary);
   font-weight: 500;
+}
+
+/* Job Badges */
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.job-badges {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.job-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.job-badge.local {
+  background: rgba(78, 115, 223, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(78, 115, 223, 0.2);
+}
+
+.job-badge.external {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.2);
 }
 </style>

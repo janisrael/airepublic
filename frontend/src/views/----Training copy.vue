@@ -492,6 +492,7 @@
 <script>
 import Icon from '../components/Icon.vue';
 import { io } from 'socket.io-client';
+import { getApiUrl } from '@/config/api';
 export default {
   name: 'TrainingView',
   components: {
@@ -569,7 +570,7 @@ export default {
   methods: {
     initializeSocket() {
       // Connect to Socket.IO server
-      this.socket = io('http://localhost:5000');
+      this.socket = io(getApiUrl('').replace('/api', ''));
       
       // Listen for real-time training progress updates
       this.socket.on('training_progress', (data) => {
@@ -613,7 +614,7 @@ export default {
     async fetchAvailableDatasets() {
       try {
         console.log('Fetching available datasets for training...');
-        const response = await fetch('http://localhost:5000/api/datasets');
+        const response = await fetch(getApiUrl('datasets'));
         const result = await response.json();
         
         if (result.success) {
@@ -647,7 +648,7 @@ export default {
     async fetchTrainingJobs() {
       try {
         console.log('Fetching training jobs from API...');
-        const response = await fetch('http://localhost:5000/api/training-jobs');
+        const response = await fetch(getApiUrl('training-jobs'));
         const result = await response.json();
         
         if (result.success) {
@@ -704,7 +705,7 @@ export default {
     
     async detectStuckJobs() {
       try {
-        const response = await fetch('http://localhost:5000/api/detect-stuck-training', {
+        const response = await fetch(getApiUrl('detect-stuck-training'), {
           method: 'POST'
         });
         const result = await response.json();
@@ -721,7 +722,7 @@ export default {
     async fetchOllamaModels() {
       try {
         console.log('Fetching Ollama models...');
-        const response = await fetch('http://localhost:5000/api/models');
+        const response = await fetch(getApiUrl('models'));
         const result = await response.json();
         
         if (result.success) {
@@ -861,7 +862,7 @@ export default {
         };
 
         // Call backend API to create training job
-        const response = await fetch('http://localhost:5000/api/training-jobs', {
+        const response = await fetch(getApiUrl('training-jobs'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -992,7 +993,7 @@ export default {
       try {
         console.log(`🚀 Starting real training for job ${jobId}`);
         
-        const response = await fetch(`http://localhost:5000/api/training-jobs/${jobId}/start`, {
+        const response = await fetch(getApiUrl(`training-jobs/${jobId}/start`), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -1029,7 +1030,7 @@ export default {
       if (confirm('Stop this training job?')) {
           console.log(`🛑 Stopping training for job ${jobId}`);
           
-          const response = await fetch(`http://localhost:5000/api/training-jobs/${jobId}/stop`, {
+          const response = await fetch(getApiUrl(`training-jobs/${jobId}/stop`), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -1064,7 +1065,7 @@ export default {
       // Poll for progress updates every 5 seconds
       const pollInterval = setInterval(async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/training-jobs/${jobId}/status`);
+          const response = await fetch(getApiUrl(`training-jobs/${jobId}/status`));
           const result = await response.json();
           
           if (result.success) {
@@ -1129,7 +1130,7 @@ export default {
       
       try {
         // Delete from backend
-        const response = await fetch(`http://localhost:5000/api/training-jobs/${jobId}`, {
+        const response = await fetch(getApiUrl(`training-jobs/${jobId}`), {
           method: 'DELETE'
         });
         
@@ -1167,7 +1168,7 @@ export default {
     
     async fetchOllamaModels() {
       try {
-        const response = await fetch('http://localhost:5000/api/models');
+        const response = await fetch(getApiUrl('models'));
         const result = await response.json();
         
         if (result.success) {
@@ -1186,7 +1187,7 @@ export default {
     
     async fetchChromaDBCollections() {
       try {
-        const response = await fetch('http://localhost:5000/api/chromadb/collections');
+        const response = await fetch(getApiUrl('chromadb/collections'));
         const result = await response.json();
         
         if (result.success) {

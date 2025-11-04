@@ -1,0 +1,523 @@
+# AI Refinement Dashboard - Database Relationship Diagram
+
+## Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    %% Core User Management
+    users {
+        int id PK
+        string username UK
+        string email UK
+        string password_hash
+        string first_name
+        string last_name
+        string avatar_url
+        boolean is_active
+        boolean is_verified
+        string email_verification_token
+        string password_reset_token
+        timestamp password_reset_expires
+        timestamp last_login
+        timestamp created_at
+        timestamp updated_at
+        string subscription_status
+        timestamp subscription_expires
+        timestamp trial_ends_at
+        string payment_customer_id
+        text metadata
+    }
+
+    roles {
+        int id PK
+        string name UK
+        string description
+        boolean is_system_role
+        timestamp created_at
+    }
+
+    permissions {
+        int id PK
+        string name UK
+        string resource
+        string action
+        string description
+        timestamp created_at
+    }
+
+    user_roles {
+        int id PK
+        int user_id FK
+        int role_id FK
+        int assigned_by FK
+        timestamp assigned_at
+        timestamp expires_at
+        boolean is_active
+    }
+
+    role_permissions {
+        int id PK
+        int role_id FK
+        int permission_id FK
+        timestamp created_at
+    }
+
+    sessions {
+        int id PK
+        int user_id FK
+        string session_token UK
+        string refresh_token UK
+        timestamp expires_at
+        timestamp created_at
+        timestamp last_accessed
+        string ip_address
+        string user_agent
+        boolean is_active
+    }
+
+    %% Subscription & Payment System
+    user_subscriptions {
+        int id PK
+        int user_id FK
+        string subscription_id UK
+        string plan_name
+        string plan_type
+        string status
+        timestamp current_period_start
+        timestamp current_period_end
+        timestamp trial_start
+        timestamp trial_end
+        boolean cancel_at_period_end
+        timestamp cancelled_at
+        timestamp created_at
+        timestamp updated_at
+        text metadata
+    }
+
+    payment_history {
+        int id PK
+        int user_id FK
+        int subscription_id FK
+        string payment_intent_id UK
+        int amount
+        string currency
+        string status
+        string payment_method
+        timestamp created_at
+        text metadata
+    }
+
+    user_usage_limits {
+        int id PK
+        int user_id FK
+        string resource_type
+        int limit_value
+        int used_value
+        string reset_period
+        timestamp reset_date
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% Provider & API Management
+    provider_capabilities {
+        int id PK
+        string provider_name UK
+        string display_name
+        string description
+        boolean requires_api_key
+        boolean requires_base_url
+        boolean supports_streaming
+        text default_models
+        text config_schema
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    user_provider_configs {
+        int id PK
+        int user_id FK
+        string provider_name
+        string config_name
+        text api_key_encrypted
+        string base_url
+        string model_id
+        text provider_config
+        boolean is_active
+        boolean is_default
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    provider_usage_logs {
+        int id PK
+        int user_id FK
+        string provider_name
+        string model_id
+        text query_text
+        int response_length
+        int tokens_used
+        real cost_estimate
+        real response_time
+        timestamp created_at
+    }
+
+    provider_test_results {
+        int id PK
+        int user_id FK
+        string provider_name
+        int config_id FK
+        boolean test_success
+        real response_time
+        text error_message
+        text test_response
+        timestamp created_at
+    }
+
+    provider_groups {
+        int id PK
+        string name UK
+        string display_name
+        string description
+        string icon
+        string color
+        timestamp created_at
+    }
+
+    user_api_keys {
+        int id PK
+        int user_id FK
+        string provider UK
+        text encrypted_key
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% Model Management
+    external_api_models {
+        int id PK
+        string name
+        string display_name
+        text description
+        string provider
+        string model_id
+        text api_key
+        string base_url
+        text capabilities
+        text parameters
+        int context_length
+        int max_tokens
+        real temperature
+        real top_p
+        text system_prompt
+        boolean is_active
+        boolean is_favorite
+        text tags
+        text metadata
+        timestamp created_at
+        timestamp updated_at
+        string avatar_url
+        string avatar_path
+        int level
+        string rank
+        int rank_level
+        int total_training_xp
+        int total_usage_xp
+        int xp_to_next_level
+        int level_up_count
+        int rank_up_count
+        int last_training_xp
+        text minion_token
+        text skillset_mastery
+        text unlocked_tools
+    }
+
+    models {
+        int id PK
+        string name
+        string display_name
+        text description
+        string provider
+        string model_id
+        string model_type
+        text capabilities
+        text parameters
+        int context_length
+        int max_tokens
+        real temperature
+        real top_p
+        text system_prompt
+        int experience
+        string level
+        boolean is_active
+        boolean is_favorite
+        text tags
+        text metadata
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    minions {
+        int id PK
+        string name
+        string display_name
+        text description
+        int model_id FK
+        string avatar_path
+        string avatar_url
+        text skillset
+        text personality
+        text behavior_config
+        boolean is_active
+        boolean is_favorite
+        text tags
+        text metadata
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    profiles {
+        int id PK
+        string name
+        string display_name
+        text description
+        int model_id FK
+        text skillset
+        text personality
+        text behavior_config
+        boolean is_active
+        boolean is_favorite
+        text tags
+        text metadata
+        timestamp created_at
+        timestamp updated_at
+        int xp_to_next_level
+        string last_sync_timestamp
+        string sync_status
+    }
+
+    reference_models {
+        int id PK
+        string name
+        string display_name
+        text description
+        string model_type
+        string provider
+        string model_id
+        text api_key
+        string base_url
+        real temperature
+        real top_p
+        int max_tokens
+        boolean stream
+        text capabilities
+        text parameters
+        int context_length
+        text system_prompt
+        boolean is_active
+        boolean is_favorite
+        text tags
+        text metadata
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% Dataset Management
+    datasets {
+        int id PK
+        string name
+        text description
+        string dataset_id UK
+        string type
+        int sample_count
+        int loaded_samples
+        string size
+        string format
+        string license
+        text tags
+        boolean is_favorite
+        boolean is_public
+        timestamp created_at
+        timestamp last_modified
+        string source
+        text metadata
+    }
+
+    user_training_datasets {
+        int id PK
+        int user_id FK
+        string name
+        text description
+        string dataset_type
+        text file_path
+        int sample_count
+        text metadata
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    %% Training System
+    training_jobs {
+        int id PK
+        string name
+        text description
+        string job_type
+        text custom_capabilities
+        string maker
+        string version
+        string base_model
+        string model_name
+        int dataset_id FK
+        string status
+        string training_type
+        real progress
+        text metrics
+        real temperature
+        real top_p
+        int context_length
+        timestamp created_at
+        timestamp started_at
+        timestamp completed_at
+    }
+
+    external_training_jobs {
+        int id PK
+        int user_id FK
+        int minion_id FK
+        string job_name
+        text description
+        string provider
+        string model_name
+        string training_type
+        string status
+        real progress
+        text config
+        text error_message
+        timestamp started_at
+        timestamp completed_at
+        timestamp created_at
+        timestamp updated_at
+        text metrics
+        int xp_gained
+        text level_up_info
+    }
+
+    training_job_datasets {
+        int id PK
+        int training_job_id FK
+        int dataset_id FK
+    }
+
+    model_profiles {
+        int id PK
+        string model_name UK
+        int training_job_id FK
+        string avatar_path
+        string avatar_url
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    evaluations {
+        int id PK
+        string model_name
+        int dataset_id FK
+        string evaluation_type
+        text before_metrics
+        text after_metrics
+        real improvement
+        timestamp created_at
+        text notes
+    }
+
+    %% Migration Tracking
+    migration_log {
+        int id PK
+        string migration_name
+        timestamp executed_at
+        string status
+    }
+
+    %% Relationships
+    users ||--o{ user_roles : "has"
+    roles ||--o{ user_roles : "assigned to"
+    users ||--o{ user_roles : "assigned by"
+    
+    roles ||--o{ role_permissions : "has"
+    permissions ||--o{ role_permissions : "granted to"
+    
+    users ||--o{ sessions : "creates"
+    
+    users ||--o{ user_subscriptions : "subscribes"
+    user_subscriptions ||--o{ payment_history : "generates"
+    
+    users ||--o{ user_usage_limits : "has"
+    
+    users ||--o{ user_provider_configs : "configures"
+    user_provider_configs ||--o{ provider_test_results : "tested by"
+    
+    users ||--o{ provider_usage_logs : "generates"
+    users ||--o{ user_api_keys : "owns"
+    
+    users ||--o{ user_training_datasets : "creates"
+    users ||--o{ external_training_jobs : "creates"
+    
+    external_api_models ||--o{ external_training_jobs : "trained by"
+    
+    external_training_jobs ||--o{ training_job_datasets : "uses"
+    user_training_datasets ||--o{ training_job_datasets : "used in"
+    
+    models ||--o{ minions : "powers"
+    models ||--o{ profiles : "powers"
+    
+    training_jobs ||--o{ model_profiles : "creates"
+    datasets ||--o{ training_jobs : "used in"
+    datasets ||--o{ evaluations : "evaluated with"
+```
+
+## Key Relationships Summary
+
+### User Management
+- **users** → **user_roles** → **roles** (RBAC system)
+- **roles** → **role_permissions** → **permissions** (permission system)
+- **users** → **sessions** (authentication)
+
+### Subscription & Payments
+- **users** → **user_subscriptions** → **payment_history**
+- **users** → **user_usage_limits** (usage tracking)
+
+### Provider & API Management
+- **users** → **user_provider_configs** (API configurations)
+- **users** → **provider_usage_logs** (usage tracking)
+- **users** → **user_api_keys** (encrypted API keys)
+- **user_provider_configs** → **provider_test_results** (connection testing)
+
+### Model & Minion System
+- **external_api_models** (minions with XP/ranking system)
+- **models** → **minions** (minion profiles)
+- **models** → **profiles** (model profiles)
+
+### Training System
+- **users** → **external_training_jobs** → **external_api_models** (minion training)
+- **external_training_jobs** → **training_job_datasets** → **user_training_datasets** (dataset usage)
+- **training_jobs** → **model_profiles** (legacy training system)
+
+### Dataset Management
+- **users** → **user_training_datasets** (user-specific datasets)
+- **datasets** (global datasets)
+- **datasets** → **evaluations** (model evaluation)
+
+## Database Files
+- **ai_dashboard.db** - Main application database
+- **auth.db** - Authentication database (separate for security)
+
+## Key Features
+1. **RBAC System** - Role-based access control with permissions
+2. **Minion XP System** - Level, rank, and XP tracking for AI minions
+3. **Training Pipeline** - RAG, LoRA, and hybrid training support
+4. **Provider Management** - Multi-provider API key management
+5. **Usage Tracking** - Comprehensive usage and billing tracking
+6. **Dataset Management** - User-specific and global datasets

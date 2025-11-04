@@ -40,7 +40,10 @@
           <div v-for="evaluation in filteredEvaluations" :key="evaluation.id" class="evaluation-card">
             <div class="evaluation-header">
               <div class="evaluation-model">
-                <div class="model-avatar" :style="{ backgroundColor: stringToColor(evaluation.modelName) }">
+                <div class="model-avatar" v-if="evaluation.avatarUrl">
+                  <img :src="evaluation.avatarUrl" :alt="evaluation.modelName + ' avatar'" class="avatar-image">
+                </div>
+                <div class="model-avatar" v-else :style="{ backgroundColor: stringToColor(evaluation.modelName) }">
                   {{ getInitials(evaluation.modelName) }}
                 </div>
                 <div>
@@ -596,6 +599,7 @@
 
 <script>
 import EvaluationSummaryCards from '@/components/EvaluationSummaryCards.vue';
+import { getApiUrl } from '@/config/api';
 
 export default {
   name: 'EvaluationView',
@@ -705,11 +709,11 @@ export default {
     async fetchEvaluations() {
       try {
         // First, get training jobs to see what models we have
-        const trainingResponse = await fetch('http://localhost:5000/api/training-jobs');
+        const trainingResponse = await fetch(getApiUrl('training-jobs'));
         const trainingResult = await trainingResponse.json();
 
         // Then get existing evaluations
-        const evalResponse = await fetch('http://localhost:5000/api/evaluations');
+        const evalResponse = await fetch(getApiUrl('evaluations'));
         const evalResult = await evalResponse.json();
 
         if (trainingResult.success && evalResult.success) {
@@ -769,7 +773,7 @@ export default {
 
     async fetchDatasets() {
       try {
-        const response = await fetch('http://localhost:5000/api/datasets');
+        const response = await fetch(getApiUrl('datasets'));
         const result = await response.json();
 
         if (result.success) {
@@ -846,13 +850,16 @@ export default {
 
     async loadRealEvaluations() {
       try {
-        // Load completed training jobs
-        const jobsResponse = await fetch('http://localhost:5000/api/training-jobs');
-        const jobsResult = await jobsResponse.json();
+        // Load completed training jobs, evaluations, and models for avatar info
+        const [jobsResponse, evaluationsResponse, modelsResponse] = await Promise.all([
+          fetch(getApiUrl('training-jobs')),
+          fetch(getApiUrl('evaluations')),
+          fetch(getApiUrl('models'))
+        ]);
         
-        // Load evaluations to get performance metrics
-        const evaluationsResponse = await fetch('http://localhost:5000/api/evaluations');
+        const jobsResult = await jobsResponse.json();
         const evaluationsResult = await evaluationsResponse.json();
+        const modelsResult = await modelsResponse.json();
         
         // Create evaluation lookup map with flexible matching
         const evaluationMap = {};
@@ -865,6 +872,14 @@ export default {
             if (!evaluationMap[baseName]) {
               evaluationMap[baseName] = evaluation;
             }
+          });
+        }
+        
+        // Create model avatar map
+        const modelAvatarMap = {};
+        if (modelsResult.success) {
+          modelsResult.models.forEach(model => {
+            modelAvatarMap[model.name] = model.avatar_url;
           });
         }
         
@@ -898,6 +913,7 @@ export default {
               modelId: job.model_name ? job.model_name.replace(':', '-') : `job-${job.id}`,
               modelName: job.model_name || job.name,
               modelType: this.getModelType(job.name),
+              avatarUrl: modelAvatarMap[job.model_name] || null,
               datasetId: config.selectedDatasets ? config.selectedDatasets[0] : 'unknown',
               datasetName: this.getDatasetName(config.selectedDatasets ? config.selectedDatasets[0] : 'unknown'),
               datasetSize: this.getDatasetSize(config.selectedDatasets ? config.selectedDatasets[0] : 'unknown'),
@@ -1849,6 +1865,14 @@ h1 {
   font-weight: 600;
   color: #333;
   font-size: 1rem;
+  overflow: hidden;
+}
+
+.model-avatar .avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .evaluation-model h4 {

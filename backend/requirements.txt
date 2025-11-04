@@ -3,9 +3,11 @@
 # Core Framework
 Flask==2.3.3
 Flask-CORS==4.0.0
+Flask-SocketIO==5.3.6
 
 # Database
 SQLAlchemy==2.0.21
+psycopg2-binary==2.9.7
 
 # AI/ML Libraries
 torch>=2.0.0
@@ -29,8 +31,10 @@ huggingface-hub>=0.16.0
 
 # Utilities
 requests>=2.31.0
+httpx>=0.25.0
 python-dotenv>=1.0.0
 tqdm>=4.65.0
+PyJWT==2.8.0
 
 # Development Tools
 pytest>=7.4.0

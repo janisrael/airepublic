@@ -1,0 +1,100 @@
+{
+  "free_tier": {
+    "Writer Spirit": {
+      "usd": 0.0,
+      "points": 0,
+      "tier": "free"
+    },
+    "Analyst Spirit": {
+      "usd": 0.0,
+      "points": 0,
+      "tier": "free"
+    },
+    "Builder Spirit": {
+      "usd": 0.0,
+      "points": 0,
+      "tier": "free"
+    },
+    "Connector Spirit": {
+      "usd": 0.0,
+      "points": 0,
+      "tier": "free"
+    },
+    "Checker Spirit": {
+      "usd": 0.0,
+      "points": 0,
+      "tier": "free"
+    }
+  },
+  "basic_tier": {
+    "Creative Spirit": {
+      "usd": 2.99,
+      "points": 30,
+      "tier": "basic"
+    },
+    "Researcher Spirit": {
+      "usd": 3.99,
+      "points": 40,
+      "tier": "basic"
+    },
+    "Debugger Spirit": {
+      "usd": 4.99,
+      "points": 50,
+      "tier": "basic"
+    },
+    "Communicator Spirit": {
+      "usd": 3.99,
+      "points": 40,
+      "tier": "basic"
+    },
+    "Scheduler Spirit": {
+      "usd": 2.99,
+      "points": 30,
+      "tier": "basic"
+    },
+    "Translator Spirit": {
+      "usd": 4.99,
+      "points": 50,
+      "tier": "basic"
+    }
+  },
+  "professional_tier": {
+    "Mathematician Spirit": {
+      "usd": 7.99,
+      "points": 80,
+      "tier": "professional"
+    },
+    "DevOps Spirit": {
+      "usd": 9.99,
+      "points": 100,
+      "tier": "professional"
+    },
+    "Security Spirit": {
+      "usd": 12.99,
+      "points": 130,
+      "tier": "professional"
+    },
+    "Educator Spirit": {
+      "usd": 8.99,
+      "points": 90,
+      "tier": "professional"
+    },
+    "Designer Spirit": {
+      "usd": 9.99,
+      "points": 100,
+      "tier": "professional"
+    }
+  },
+  "premium_tier": {
+    "Consultant Spirit": {
+      "usd": 14.99,
+      "points": 150,
+      "tier": "premium"
+    },
+    "Healer Spirit": {
+      "usd": 16.99,
+      "points": 170,
+      "tier": "premium"
+    }
+  }
+}

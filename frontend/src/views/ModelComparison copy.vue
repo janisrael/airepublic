@@ -397,7 +397,7 @@ export default {
   methods: {
     async loadAvailableModels() {
       try {
-        const response = await fetch('http://localhost:5000/api/models')
+        const response = await fetch(getApiUrl('models'))
         const data = await response.json()
         
         if (data.success) {
@@ -441,7 +441,7 @@ export default {
       
       try {
         const promises = this.selectedModels.map(async (modelName) => {
-          const response = await fetch(`http://localhost:5000/api/models/${modelName}/details`)
+          const response = await fetch(getApiUrl(`models/${modelName}/details`))
           const data = await response.json()
           
           if (data.success) {

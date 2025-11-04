@@ -1,333 +1,212 @@
-# AI Refinement Dashboard - Setup Instructions
+# AI Republic Setup Guide
 
-## 🚀 Quick Start
+This guide will help you set up the AI Republic platform with all required services.
 
-This AI Refinement Dashboard is a complete platform for training, managing, and evaluating AI models with a beautiful neumorphic UI.
+## Prerequisites
 
-## 📋 Prerequisites
+- Python 3.8+
+- Node.js 16+
+- PostgreSQL 12+
+- Redis/Valkey
 
-### Required Software
-- **Python 3.8+** (for backend)
-- **Node.js 16+** (for frontend)
-- **Ollama** (for local AI models)
-- **Git** (for version control)
+## Quick Start
 
-### System Requirements
-- **RAM**: 8GB+ (16GB recommended for training)
-- **Storage**: 20GB+ free space
-- **GPU**: Optional but recommended for faster training
-
-## 🛠️ Installation
-
-### 1. Clone the Repository
+### 1. Start All Services
 ```bash
-git clone <your-repo-url>
-cd ai-refinement-dashboard
+./start_services.sh
 ```
 
-### 2. Backend Setup
+### 2. Start Backend Server
 ```bash
-# Navigate to backend directory
 cd backend
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Install additional AI dependencies
-pip install chromadb sentence-transformers transformers torch peft datasets accelerate bitsandbytes
+python3 app_server_new.py
 ```
 
-### 3. Frontend Setup
+### 3. Start Frontend Server
 ```bash
-# Navigate to frontend directory
-cd ../frontend
-
-# Install dependencies
-npm install
-```
-
-### 4. ChromaDB Setup
-```bash
-# ChromaDB is automatically installed with pip install chromadb
-# It will create a local database in backend/chromadb_data/
-
-# Test ChromaDB installation
-cd backend
-python3 -c "import chromadb; print('✅ ChromaDB installed successfully')"
-```
-
-### 5. Ollama Setup
-```bash
-# Install Ollama (Linux)
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# Start Ollama service
-ollama serve
-
-# Pull base models (in another terminal)
-ollama pull llama3.1:8b
-ollama pull codellama:13b
-ollama pull qwen2.5-coder:7b
-```
-
-## 🚀 Running the Application
-
-### Option 1: Using the Service Script (Recommended)
-```bash
-# Start all services
-./start_services.sh start
-
-# Stop all services
-./start_services.sh stop
-
-# Check status
-./start_services.sh status
-```
-
-### Option 2: Manual Start
-```bash
-# Terminal 1: Backend
-cd backend
-python3 api_server.py
-
-# Terminal 2: Frontend
 cd frontend
 npm run dev
 ```
 
-## 🌐 Access Points
+## Manual Setup
 
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:5000
-- **Health Check**: http://localhost:5000/api/health
+### PostgreSQL Setup
 
-## 📊 Features Overview
-
-### 🏠 Dashboard
-- Real-time statistics
-- Training progress monitoring
-- Model performance overview
-
-### 🤖 Models
-- View all local Ollama models
-- Model capabilities and tags
-- Real-time model information
-
-### 📚 Datasets
-- Load datasets from Hugging Face
-- Upload custom JSONL files
-- Dataset preview and management
-
-### 🏋️ Training
-- **RAG Training**: Fast knowledge base setup with ChromaDB (2-5 minutes)
-  - Creates vector embeddings from your datasets
-  - Enables semantic search and retrieval
-  - Perfect for Q&A and knowledge-based tasks
-- **LoRA Training**: Real fine-tuning with Hugging Face integration (20-30+ minutes)
-  - Efficient parameter fine-tuning
-  - Supports multiple base models
-  - Real-time progress tracking with step counters
-- Multi-dataset training support
-- Real-time progress tracking via Socket.IO
-
-### 📈 Evaluation
-- Training job results
-- Before/after comparisons
-- Performance metrics
-- Model evaluation history
-
-## 🔧 Configuration
-
-### Environment Variables
-Create a `.env` file in the backend directory:
-```env
-# Database
-DATABASE_PATH=./ai_dashboard.db
-
-# ChromaDB
-CHROMADB_PATH=./chromadb_data
-CHROMADB_BATCH_SIZE=512
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-
-# Ollama
-OLLAMA_HOST=http://localhost:11434
-
-# Training
-MAX_TRAINING_TIME=3600
-DEFAULT_BATCH_SIZE=4
-DEFAULT_LEARNING_RATE=0.0002
-LORA_RANK=8
-LORA_ALPHA=32
-LORA_DROPOUT=0.05
-```
-
-### Model Configuration
-Models are stored in the `models/` directory with Modelfile configurations.
-
-## 🎯 Usage Examples
-
-### 1. Load a Dataset
-1. Go to **Datasets** page
-2. Click **"🤗 Load from Hugging Face"**
-3. Enter dataset ID (e.g., `sahil2801/CodeAlpaca-20k`)
-4. Click **Load Dataset**
-
-### 2. Start Training
-
-#### RAG Training (Fast - 2-5 minutes)
-1. Go to **Training** page
-2. Click **"Start Training"**
-3. Fill in the training modal:
-   - **Name**: "My RAG Assistant"
-   - **Base Model**: "llama3.1:8b"
-   - **Training Type**: "RAG"
-   - **Select Datasets**: Choose your datasets
-   - **Description**: "AI assistant with knowledge base"
-4. Click **"Start Training"**
-   - Creates ChromaDB knowledge base
-   - Generates vector embeddings
-   - Creates Ollama model with RAG capabilities
-
-#### LoRA Training (Real Fine-tuning - 20-30+ minutes)
-1. Go to **Training** page
-2. Click **"Start Training"**
-3. Fill in the training modal:
-   - **Name**: "My Fine-tuned Model"
-   - **Base Model**: "llama3.1:8b"
-   - **Training Type**: "LoRA"
-   - **Select Datasets**: Choose your datasets
-   - **LoRA Config**: Adjust rank, alpha, dropout
-   - **Training Params**: Set epochs, batch size, learning rate
-4. Click **"Start Training"**
-   - Downloads Hugging Face model
-   - Performs real fine-tuning
-   - Creates Ollama model with LoRA weights
-
-### 3. View Results
-1. Go to **Models** page to see created models
-2. Go to **Evaluation** page to see training results
-3. Use `ollama run <model-name>` to test your model
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-#### Backend Won't Start
+1. **Install PostgreSQL:**
 ```bash
-# Check if port 5000 is available
-lsof -i :5000
-
-# Kill existing processes
-pkill -f "python3 api_server.py"
+sudo dnf install postgresql postgresql-server postgresql-contrib
 ```
 
-#### Frontend Won't Start
+2. **Initialize and Start:**
 ```bash
-# Clear node modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
+sudo postgresql-setup --initdb
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
 ```
 
-#### Ollama Connection Issues
+3. **Create Database and User:**
 ```bash
-# Check Ollama status
-ollama list
-
-# Restart Ollama
-pkill ollama
-ollama serve
+sudo -u postgres createuser --createdb --pwprompt ai_republic
+# Enter password: admin123
+sudo -u postgres createdb ai_republic_spirits
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ai_republic_spirits TO ai_republic;"
 ```
 
-#### Training Fails
-- Check available disk space (need 5GB+ for training)
-- Ensure Ollama is running
-- Check ChromaDB installation: `python3 -c "import chromadb"`
-- Check backend logs: `tail -f backend/api_server.log`
-- For LoRA training: Ensure Hugging Face models are accessible
-- For RAG training: Check ChromaDB data directory permissions
-
-### Logs Location
-- **Backend**: `backend/api_server.log`
-- **Frontend**: `frontend/frontend.log`
-
-## 📁 Project Structure
-
-```
-ai-refinement-dashboard/
-├── backend/
-│   ├── api_server.py          # Main API server with Socket.IO
-│   ├── database.py            # SQLite database
-│   ├── training_executor.py   # Training logic (RAG + LoRA)
-│   ├── chromadb_service.py    # ChromaDB integration
-│   ├── dataset_loader.py      # Dataset loading
-│   ├── chromadb_data/         # ChromaDB vector database
-│   └── requirements.txt        # Python dependencies
-├── frontend/
-│   ├── src/
-│   │   ├── views/             # Vue.js pages
-│   │   ├── components/        # Reusable components
-│   │   └── assets/           # CSS and assets
-│   └── package.json          # Node.js dependencies
-├── models/                   # Generated Ollama models
-├── training_data/           # LoRA training datasets
-├── start_services.sh        # Service management script
-└── SETUP.md                # This file
+4. **Configure Authentication:**
+```bash
+sudo sed -i 's/ident/md5/g' /var/lib/pgsql/data/pg_hba.conf
+sudo systemctl reload postgresql
 ```
 
-## 🧠 ChromaDB Features
+### Redis/Valkey Setup
 
-### What is ChromaDB?
-ChromaDB is a vector database that enables semantic search and retrieval-augmented generation (RAG). It stores your training data as vector embeddings, allowing AI models to find relevant information quickly.
+1. **Install Valkey (Redis-compatible):**
+```bash
+sudo dnf install valkey-compat-redis
+```
 
-### RAG Training Process
-1. **Data Ingestion**: Your datasets are converted into vector embeddings
-2. **Storage**: Embeddings are stored in ChromaDB collections
-3. **Retrieval**: When you ask questions, relevant data is retrieved
-4. **Generation**: The AI model uses retrieved data to provide accurate answers
+2. **Start Valkey:**
+```bash
+sudo -u valkey /usr/bin/valkey-server --port 6379 --daemonize yes
+```
 
-### ChromaDB Collections
-- Each training job creates a unique collection: `knowledge_base_job_{id}`
-- Collections contain vector embeddings of your dataset samples
-- Supports semantic search across all your training data
-- Automatic batching for efficient processing
+3. **Test Connection:**
+```bash
+redis-cli ping
+# Should return: PONG
+```
 
-### Benefits of RAG
-- **Fast Setup**: 2-5 minutes vs 20-30+ minutes for LoRA
-- **Knowledge Retention**: Models can access your specific data
-- **Flexible**: Easy to update knowledge base with new data
-- **Efficient**: Only relevant information is retrieved per query
+### Environment Configuration
 
-## 🔒 Security Notes
+1. **Backend Environment:**
+```bash
+cd backend
+cp .env.example .env
+# Edit .env with your settings
+```
 
-- The application runs locally by default
-- No external API keys required for basic functionality
-- ChromaDB data is stored locally in `backend/chromadb_data/`
-- Training data remains on your machine
-- Vector embeddings are generated locally
+2. **Frontend Environment:**
+```bash
+cd frontend
+cp env.example .env
+# Edit .env with your settings
+```
 
-## 🤝 Contributing
+## Environment Variables
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+### Backend (.env)
+```bash
+# PostgreSQL Database Configuration
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=ai_republic_spirits
+POSTGRES_USER=ai_republic
+POSTGRES_PASSWORD=admin123
 
-## 📄 License
+# Redis/Valkey Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_PASSWORD=
 
-This project is licensed under the MIT License.
+# Server Configuration
+BACKEND_PORT=5000
+BACKEND_HOST=localhost
+DEBUG_MODE=true
 
-## 🆘 Support
+# Security Configuration
+SECRET_KEY=your-secret-key-here-change-in-production
+CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+```
 
-For issues and questions:
-1. Check the troubleshooting section
-2. Review the logs
-3. Create an issue in the repository
+### Frontend (.env)
+```bash
+# Frontend API Configuration
+VITE_V1_BASE_URL=http://localhost:5000/api
+VITE_V2_BASE_URL=http://localhost:5000/api/v2
+VITE_API_BASE_URL=http://localhost:5000/api/v2
+VITE_AUTH_ENDPOINT=http://localhost:5000/api/auth
+VITE_API_VERSION=v2
+VITE_DEV_MODE=true
+VITE_DEBUG_API_CALLS=false
+```
 
----
+## Service Management
 
-**Happy Training! 🚀**
+### Start Services
+```bash
+# PostgreSQL
+sudo systemctl start postgresql
+
+# Redis/Valkey
+sudo -u valkey /usr/bin/valkey-server --port 6379 --daemonize yes
+```
+
+### Stop Services
+```bash
+# PostgreSQL
+sudo systemctl stop postgresql
+
+# Redis/Valkey
+sudo pkill -f valkey-server
+```
+
+### Check Service Status
+```bash
+# PostgreSQL
+systemctl status postgresql
+
+# Redis/Valkey
+redis-cli ping
+```
+
+## Troubleshooting
+
+### PostgreSQL Connection Issues
+```bash
+# Test connection
+python3 -c "
+from dotenv import load_dotenv
+load_dotenv()
+from database.postgres_connection import test_connection
+test_connection()
+"
+```
+
+### Redis Connection Issues
+```bash
+# Test connection
+redis-cli ping
+
+# Check if port is in use
+sudo netstat -tlnp | grep 6379
+```
+
+### Backend Server Issues
+```bash
+# Check if server is running
+ps aux | grep app_server_new.py
+
+# Kill all backend processes
+pkill -f app_server_new.py
+
+# Restart server
+cd backend && python3 app_server_new.py
+```
+
+## Development Workflow
+
+1. **Start all services:** `./start_services.sh`
+2. **Start backend:** `cd backend && python3 app_server_new.py`
+3. **Start frontend:** `cd frontend && npm run dev`
+4. **Access application:** http://localhost:5173
+
+## Production Considerations
+
+- Change default passwords
+- Use strong SECRET_KEY
+- Configure proper CORS origins
+- Enable SSL/TLS
+- Set up proper logging
+- Configure firewall rules
+- Set up monitoring and backups
