@@ -63,6 +63,8 @@
 </template>
 
 <script>
+import { getApiUrl } from '@/config/api';
+
 export default {
   name: 'TrainingOutput',
   props: {
@@ -101,7 +103,7 @@ export default {
       
       this.statusPollingInterval = setInterval(async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/training-jobs/${this.currentJob.id}/status`);
+          const response = await fetch(getApiUrl(`training-jobs/${this.currentJob.id}/status`));
           const result = await response.json();
           
           if (result.success && result.status) {

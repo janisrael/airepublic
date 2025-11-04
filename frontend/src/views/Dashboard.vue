@@ -122,6 +122,7 @@
 <script>
 import * as echarts from 'echarts';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { API_ENDPOINTS } from '@/config/api';
 
 export default {
   name: 'DashboardView',
@@ -426,32 +427,45 @@ export default {
   },
   methods: {
     async loadRealData() {
+      // Load all data once and share between methods
+      const [jobsResponse, datasetsResponse] = await Promise.all([
+        fetch(API_ENDPOINTS.v2.trainingJobs),
+        fetch(API_ENDPOINTS.v2.datasets)
+      ]);
+      
+      const jobsData = await jobsResponse.json();
+      const datasetsData = await datasetsResponse.json();
+      
       await Promise.all([
-        this.loadStats(),
-        this.loadRecentActivities(),
-        this.loadChartData()
+        this.loadStats(jobsData, datasetsData),
+        this.loadRecentActivities(jobsData),
+        this.loadChartData(jobsData)
       ]);
     },
     
-    async loadStats() {
+    async loadStats(jobsData = null, datasetsData = null) {
       try {
-        // Load models count
-        const modelsResponse = await fetch('http://localhost:5000/api/models');
+        // Load models count - V2 API
+        const modelsResponse = await fetch(API_ENDPOINTS.v2.models);
         const modelsData = await modelsResponse.json();
         this.stats.activeModels = modelsData.success ? modelsData.total : 0;
         
-        // Load training jobs count
-        const jobsResponse = await fetch('http://localhost:5000/api/training-jobs');
-        const jobsData = await jobsResponse.json();
+        // Use shared training jobs data if provided, otherwise fetch it
+        if (!jobsData) {
+          const jobsResponse = await fetch(API_ENDPOINTS.v2.trainingJobs);
+          jobsData = await jobsResponse.json();
+        }
         this.stats.trainingJobs = jobsData.success ? jobsData.total : 0;
         
-        // Load datasets count
-        const datasetsResponse = await fetch('http://localhost:5000/api/datasets');
-        const datasetsData = await datasetsResponse.json();
+        // Use shared datasets data if provided, otherwise fetch it
+        if (!datasetsData) {
+          const datasetsResponse = await fetch(API_ENDPOINTS.v2.datasets);
+          datasetsData = await datasetsResponse.json();
+        }
         this.stats.datasets = datasetsData.success ? datasetsData.total : 0;
         
         // Calculate average accuracy from completed training jobs
-        if (jobsData.success && jobsData.jobs.length > 0) {
+        if (jobsData.success && jobsData.jobs && jobsData.jobs.length > 0) {
           const completedJobs = jobsData.jobs.filter(job => job.status === 'COMPLETED');
           if (completedJobs.length > 0) {
             // Calculate realistic accuracy based on training type
@@ -467,10 +481,14 @@ export default {
       }
     },
     
-    async loadRecentActivities() {
+    async loadRecentActivities(jobsData = null) {
       try {
-        const response = await fetch('http://localhost:5000/api/training-jobs');
-        const data = await response.json();
+        // Use shared training jobs data if provided, otherwise fetch it
+        if (!jobsData) {
+          const response = await fetch(API_ENDPOINTS.v2.trainingJobs);
+          jobsData = await response.json();
+        }
+        const data = jobsData;
         
         if (data.success && data.jobs.length > 0) {
           this.recentActivities = data.jobs
@@ -495,16 +513,16 @@ export default {
       }
     },
     
-    async loadChartData() {
+    async loadChartData(jobsData = null) {
       try {
-        // Load both training jobs and evaluations for real data
-        const [jobsResponse, evaluationsResponse] = await Promise.all([
-          fetch('http://localhost:5000/api/training-jobs'),
-          fetch('http://localhost:5000/api/evaluations')
-        ]);
+        // Use shared training jobs data if provided, otherwise fetch it
+        if (!jobsData) {
+          const jobsResponse = await fetch(API_ENDPOINTS.v2.trainingJobs);
+          jobsData = await jobsResponse.json();
+        }
         
-        const jobsData = await jobsResponse.json();
-        const evaluationsData = await evaluationsResponse.json();
+        // TODO: Add evaluations endpoint when available
+        const evaluationsData = { success: true, evaluations: [] };
         
         if (jobsData.success && jobsData.jobs.length > 0) {
           const completedJobs = jobsData.jobs.filter(job => job.status === 'COMPLETED');

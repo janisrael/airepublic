@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Free Plan",
+    "price_usd": 0.0,
+    "billing_cycle": "monthly",
+    "free_spirits": [
+      "Writer Spirit",
+      "Analyst Spirit",
+      "Builder Spirit",
+      "Connector Spirit",
+      "Checker Spirit"
+    ],
+    "discount_on_purchases": 0,
+    "exclusive_spirits": [],
+    "max_minions": 2,
+    "max_spirits_per_minion": 3,
+    "features": [
+      "Basic spirit access",
+      "Community support",
+      "Standard templates"
+    ]
+  },
+  {
+    "name": "Creator Plan",
+    "price_usd": 9.99,
+    "billing_cycle": "monthly",
+    "free_spirits": [
+      "Writer Spirit",
+      "Creative Spirit",
+      "Analyst Spirit",
+      "Builder Spirit",
+      "Connector Spirit",
+      "Checker Spirit",
+      "Communicator Spirit"
+    ],
+    "discount_on_purchases": 20,
+    "exclusive_spirits": [],
+    "max_minions": 5,
+    "max_spirits_per_minion": 4,
+    "features": [
+      "7 free spirits",
+      "20% off purchases",
+      "Priority support",
+      "Advanced templates",
+      "Early access to new spirits"
+    ]
+  },
+  {
+    "name": "Professional Plan",
+    "price_usd": 19.99,
+    "billing_cycle": "monthly",
+    "free_spirits": [
+      "Writer Spirit",
+      "Creative Spirit",
+      "Analyst Spirit",
+      "Researcher Spirit",
+      "Builder Spirit",
+      "Debugger Spirit",
+      "Connector Spirit",
+      "Communicator Spirit",
+      "Checker Spirit",
+      "Security Spirit"
+    ],
+    "discount_on_purchases": 35,
+    "exclusive_spirits": [],
+    "max_minions": 10,
+    "max_spirits_per_minion": 5,
+    "features": [
+      "10 free spirits",
+      "35% off purchases",
+      "Premium support",
+      "Custom templates",
+      "Beta access",
+      "API access"
+    ]
+  },
+  {
+    "name": "Enterprise Plan",
+    "price_usd": 49.99,
+    "billing_cycle": "monthly",
+    "free_spirits": "ALL",
+    "discount_on_purchases": 50,
+    "exclusive_spirits": [
+      "Consultant Spirit",
+      "Healer Spirit"
+    ],
+    "max_minions": -1,
+    "max_spirits_per_minion": 5,
+    "features": [
+      "All spirits included",
+      "50% off bundles",
+      "White-glove support",
+      "Custom integrations",
+      "Team management",
+      "Advanced analytics"
+    ]
+  }
+]

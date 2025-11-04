@@ -22,9 +22,17 @@ class LoRAScriptGenerator:
         batch_size = config.get('batchSize', 4)
         epochs = config.get('epochs', 3)
         learning_rate = config.get('learningRate', 0.0002)
+        use_qlora = config.get('useQLoRA', False)  # Enable QLoRA for large models
         
-        # Use small models that fit in RTX 4050's 6GB VRAM
-        # Always use DialoGPT-medium (345M parameters) - perfect for small datasets and GPU memory
+        # Map Ollama model to HuggingFace ID
+        hf_model = self._map_ollama_to_hf(base_model)
+        
+        # Determine if we need QLoRA (4-bit quantization)
+        needs_qlora = use_qlora or self._is_large_model(hf_model)
+        
+        # Adjust batch size for large models
+        if needs_qlora:
+            batch_size = min(batch_size, 2)  # Smaller batch for QLoRA
         
         script_content = f'''#!/usr/bin/env python3
 """
@@ -59,7 +67,7 @@ logger = logging.getLogger(__name__)
 def send_output_to_frontend(job_id, message):
     """Send output to frontend via API"""
     try:
-        requests.post(f'http://localhost:5000/api/training-jobs/{{job_id}}/output', 
+        requests.post(f'http://localhost:5001/api/training-jobs/{{job_id}}/output', 
                     json={{
                         'output': message,
                         'timestamp': datetime.now().isoformat()
@@ -76,7 +84,7 @@ class ProgressCallback(TrainerCallback):
         if state.global_step % 5 == 0:  # Update every 5 steps
             try:
                 progress = 0.2 + (state.global_step / state.max_steps) * 0.6
-                requests.post(f'http://localhost:5000/api/training-jobs/{{job_id}}/progress', 
+                requests.post(f'http://localhost:5001/api/training-jobs/{{job_id}}/progress', 
                             json={{
                                 'progress': progress,
                                 'current_step': state.global_step,
@@ -95,10 +103,11 @@ def main():
         send_output_to_frontend(job_id, "🚀 Starting LoRA training for {job_name}")
         
         # Model and data paths
-        base_model = "microsoft/DialoGPT-medium"
+        base_model = "{hf_model}"
         train_data_path = "training_data/job_{job_id}/train.jsonl"
         val_data_path = "training_data/job_{job_id}/val.jsonl"
         output_dir = f"models/{job_name}_lora"
+        use_qlora = {needs_qlora}
         
         # DEBUG: Check if training files exist
         logger.info(f"🔍 DEBUG: Checking training files...")
@@ -127,23 +136,33 @@ def main():
         else:
             logger.info(f"🔍 DEBUG: Running on CPU - CUDA not available")
         
-        # Configure model loading based on CUDA availability
+        # Configure model loading based on CUDA availability and model size
         if torch.cuda.is_available():
-            logger.info("🔧 Loading model with CUDA support")
-            bnb_config = BitsAndBytesConfig(
-                load_in_4bit=True,
-                bnb_4bit_quant_type="nf4",
-                bnb_4bit_compute_dtype=torch.bfloat16,
-                bnb_4bit_use_double_quant=True,
-            )
-            
-            model = AutoModelForCausalLM.from_pretrained(
-                base_model,
-                quantization_config=bnb_config,
-                device_map="auto",
-                trust_remote_code=True,
-                torch_dtype=torch.bfloat16
-            )
+            if use_qlora:
+                logger.info("🔧 Loading model with QLoRA (4-bit quantization) for RTX 4050")
+                bnb_config = BitsAndBytesConfig(
+                    load_in_4bit=True,
+                    bnb_4bit_quant_type="nf4",
+                    bnb_4bit_compute_dtype=torch.float16,  # Use float16 for RTX 4050
+                    bnb_4bit_use_double_quant=True,
+                )
+                
+                model = AutoModelForCausalLM.from_pretrained(
+                    base_model,
+                    quantization_config=bnb_config,
+                    device_map="auto",
+                    trust_remote_code=True,
+                    torch_dtype=torch.float16
+                )
+                model = prepare_model_for_kbit_training(model)
+            else:
+                logger.info("🔧 Loading model with CUDA support (full precision)")
+                model = AutoModelForCausalLM.from_pretrained(
+                    base_model,
+                    device_map="auto",
+                    trust_remote_code=True,
+                    torch_dtype=torch.float16
+                )
         else:
             logger.info("🔧 Loading model for CPU-only environment")
             model = AutoModelForCausalLM.from_pretrained(
@@ -154,13 +173,13 @@ def main():
         
         tokenizer = AutoTokenizer.from_pretrained(base_model, trust_remote_code=True)
         
-        # Add padding token if missing
+        # Add padding token if missing (important for Gemma models)
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
             tokenizer.pad_token_id = tokenizer.eos_token_id
         
-        # Prepare model for k-bit training (only if CUDA available)
-        if torch.cuda.is_available():
+        # Prepare model for k-bit training (only if QLoRA)
+        if use_qlora and torch.cuda.is_available():
             model = prepare_model_for_kbit_training(model)
         
         # LoRA configuration with better target modules
@@ -191,29 +210,31 @@ def main():
             streaming=False
         )
         
-        # Tokenize function with better formatting
+        # Tokenize function with NL→Code formatting (optimized for Amigo training)
         def tokenize_function(examples):
-            # Create instruction format following Alpaca style
+            # Create instruction format optimized for Natural Language → Code training
             texts = []
             for i in range(len(examples["instruction"])):
                 instruction = examples["instruction"][i]
-                input_text = examples["input"][i] if examples["input"][i] else ""
+                input_text = examples["input"][i] if "input" in examples and examples["input"][i] else ""
                 output = examples["output"][i]
                 
-                # Use Alpaca format
+                # Use streamlined format for NL→Code (Cursor-style)
+                # Skip verbose reasoning for direct code generation
                 if input_text:
-                    text = f"Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.\\n\\n### Instruction:\\n{{instruction}}\\n\\n### Input:\\n{{input_text}}\\n\\n### Response:\\n{{output}}"
+                    text = f"### Instruction:\\n{{instruction}}\\n\\n### Input:\\n{{input_text}}\\n\\n### Response:\\n{{output}}"
                 else:
-                    text = f"Below is an instruction that describes a task. Write a response that appropriately completes the request.\\n\\n### Instruction:\\n{{instruction}}\\n\\n### Response:\\n{{output}}"
+                    # Direct NL→Code format (no verbose reasoning)
+                    text = f"### Instruction:\\n{{instruction}}\\n\\n### Response:\\n{{output}}"
                 
                 texts.append(text)
             
-            # Tokenize with proper settings
+            # Tokenize with proper settings (longer max_length for code)
             tokenized = tokenizer(
                 texts,
                 truncation=True,
                 padding=True,
-                max_length=512,
+                max_length=2048,  # Longer for code generation
                 return_tensors="pt"
             )
             
@@ -225,33 +246,61 @@ def main():
         train_dataset = dataset["train"].map(tokenize_function, batched=True, remove_columns=dataset["train"].column_names)
         val_dataset = dataset["validation"].map(tokenize_function, batched=True, remove_columns=dataset["validation"].column_names)
         
-        # Training arguments - configure based on CUDA availability
+        # Training arguments - configure based on CUDA availability and model size
         if torch.cuda.is_available():
-            logger.info("🔧 Configuring training for CUDA")
-            training_args = TrainingArguments(
-                output_dir=output_dir,
-                per_device_train_batch_size={batch_size},
-                per_device_eval_batch_size={batch_size},
-                gradient_accumulation_steps=4,
-                num_train_epochs={epochs},
-                learning_rate={learning_rate},
-                warmup_ratio=0.1,
-                weight_decay=0.01,
-                fp16=True,
-                logging_steps=10,
-                eval_strategy="steps",
-                eval_steps=50,
-                save_steps=100,
-                save_total_limit=3,
-                load_best_model_at_end=True,
-                metric_for_best_model="eval_loss",
-                greater_is_better=False,
-                report_to=None,  # Disable wandb/tensorboard
-                remove_unused_columns=False,
-                dataloader_pin_memory=False,
-                optim="adamw_torch",
-                lr_scheduler_type="cosine",
-            )
+            if use_qlora:
+                logger.info("🔧 Configuring training for CUDA with QLoRA (optimized for RTX 4050)")
+                training_args = TrainingArguments(
+                    output_dir=output_dir,
+                    per_device_train_batch_size={batch_size},
+                    per_device_eval_batch_size={batch_size},
+                    gradient_accumulation_steps=4,  # Effective batch = 2 * 4 = 8
+                    num_train_epochs={epochs},
+                    learning_rate={learning_rate},
+                    warmup_ratio=0.1,
+                    weight_decay=0.01,
+                    fp16=True,  # Mixed precision for QLoRA
+                    logging_steps=10,
+                    eval_strategy="steps",
+                    eval_steps=50,
+                    save_steps=100,
+                    save_total_limit=3,
+                    load_best_model_at_end=True,
+                    metric_for_best_model="eval_loss",
+                    greater_is_better=False,
+                    report_to=None,
+                    remove_unused_columns=False,
+                    dataloader_pin_memory=False,
+                    optim="adamw_torch",
+                    lr_scheduler_type="cosine",
+                    max_grad_norm=1.0,  # Gradient clipping for stability
+                )
+            else:
+                logger.info("🔧 Configuring training for CUDA (full precision)")
+                training_args = TrainingArguments(
+                    output_dir=output_dir,
+                    per_device_train_batch_size={batch_size},
+                    per_device_eval_batch_size={batch_size},
+                    gradient_accumulation_steps=4,
+                    num_train_epochs={epochs},
+                    learning_rate={learning_rate},
+                    warmup_ratio=0.1,
+                    weight_decay=0.01,
+                    fp16=True,
+                    logging_steps=10,
+                    eval_strategy="steps",
+                    eval_steps=50,
+                    save_steps=100,
+                    save_total_limit=3,
+                    load_best_model_at_end=True,
+                    metric_for_best_model="eval_loss",
+                    greater_is_better=False,
+                    report_to=None,
+                    remove_unused_columns=False,
+                    dataloader_pin_memory=False,
+                    optim="adamw_torch",
+                    lr_scheduler_type="cosine",
+                )
         else:
             logger.info("🔧 Configuring training for CPU")
             training_args = TrainingArguments(
@@ -343,6 +392,11 @@ if __name__ == "__main__":
             'qwen2.5-coder:14b': 'Qwen/Qwen2.5-Coder-14B',
             'gemma:2b': 'google/gemma-2b',
             'gemma:7b': 'google/gemma-7b',
+            'gemma-2:2b': 'google/gemma-2-2b-it',
+            'gemma-2:9b': 'google/gemma-2-9b-it',
+            'gemma-2:27b': 'google/gemma-2-27b-it',
+            'gemma-3:12b': 'google/gemma-3-12b-it',
+            'claude-3.7-sonnet-reasoning-gemma3-12b': 'google/gemma-3-12b-it',  # Amigo base model
             'phi3:3.8b': 'microsoft/Phi-3-medium-4k-instruct',
             'phi3:14b': 'microsoft/Phi-3.5-14b-instruct',
         }
@@ -357,3 +411,13 @@ if __name__ == "__main__":
             # Default fallback - try to use the name as-is
             print(f"⚠️ Unknown Ollama model: {ollama_model}, using as Hugging Face ID")
             return clean_name
+    
+    def _is_large_model(self, hf_model: str) -> bool:
+        """Check if model is large (>=9B) and needs QLoRA"""
+        large_models = [
+            'google/gemma-3-12b-it',
+            'google/gemma-2-27b-it',
+            'meta-llama/Llama-3.1-70B',
+            'Qwen/Qwen2.5-32B',
+        ]
+        return hf_model in large_models or '12b' in hf_model.lower() or '27b' in hf_model.lower()

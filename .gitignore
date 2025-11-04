@@ -34,17 +34,24 @@ env/
 ENV/
 
 # Database
-*.db
-*.sqlite
-*.sqlite3
-backend/ai_dashboard.db
 backend/chromadb_data/
+backend/app/services/chromadb_data/
+
+# Large files
+*.deb
+*.bin
+docs/*.deb
 
 # Logs
 *.log
 logs/
+backend.log
+frontend.log
 backend/api_server.log
 frontend/frontend.log
+
+# Process IDs
+*.pid
 
 # Node.js
 node_modules/
@@ -71,8 +78,6 @@ frontend/build/
 ._*
 .Spotlight-V100
 .Trashes
-ehthumbs.db
-Thumbs.db
 
 # Training artifacts
 backend/training_scripts/
@@ -80,9 +85,22 @@ backend/models/
 backend/avatars/
 
 # Backups
-backup_*.db
 *.backup
 
 # Temporary files
 *.tmp
 *.temp
+
+# Uploaded files
+uploads/
+backend/uploads/
+
+# Database files (if any)
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache
+.cache/
+__pycache__/
+*.pyc

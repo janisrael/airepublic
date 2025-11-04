@@ -1,0 +1,462 @@
+[
+  {
+    "name": "CodeMaster Pro",
+    "category": "Development & Technical",
+    "icon": "🚀",
+    "description": "Full-stack development with security focus",
+    "spirits": [
+      "Builder Spirit",
+      "Debugger Spirit",
+      "Analyst Spirit",
+      "Security Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 25,
+    "conflict_penalty": -10,
+    "net_performance": 25,
+    "tools_count": 20,
+    "perfect_for": "Enterprise software development, secure coding",
+    "unlock_rank": "Novice",
+    "unlock_level": 1
+  },
+  {
+    "name": "DevOps Engineer",
+    "category": "Development & Technical",
+    "icon": "⚙️",
+    "description": "Infrastructure automation and monitoring",
+    "spirits": [
+      "DevOps Spirit",
+      "Builder Spirit",
+      "Analyst Spirit",
+      "Scheduler Spirit",
+      "Security Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 18,
+    "perfect_for": "CI/CD, infrastructure management, system administration",
+    "unlock_rank": "Specialist",
+    "unlock_level": 2
+  },
+  {
+    "name": "Hybrid Developer",
+    "category": "Development & Technical",
+    "icon": "🔄",
+    "description": "Full-stack development with creative problem-solving",
+    "spirits": [
+      "Builder Spirit",
+      "Creative Spirit",
+      "Connector Spirit",
+      "Debugger Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 35,
+    "conflict_penalty": -5,
+    "net_performance": 30,
+    "tools_count": 22,
+    "perfect_for": "Startup development, rapid prototyping, creative coding",
+    "unlock_rank": "Skilled",
+    "unlock_level": 3
+  },
+  {
+    "name": "Enterprise Architect",
+    "category": "Development & Technical",
+    "icon": "🏗️",
+    "description": "Enterprise system architecture and strategy",
+    "spirits": [
+      "DevOps Spirit",
+      "Security Spirit",
+      "Analyst Spirit",
+      "Consultant Spirit",
+      "Builder Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 21,
+    "perfect_for": "Enterprise architecture, system design, IT strategy",
+    "unlock_rank": "Master",
+    "unlock_level": 1
+  },
+  {
+    "name": "Creative Assistant",
+    "category": "Content & Creative",
+    "icon": "✨",
+    "description": "Content creation and education",
+    "spirits": [
+      "Writer Spirit",
+      "Creative Spirit",
+      "Translator Spirit",
+      "Communicator Spirit",
+      "Educator Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 15,
+    "perfect_for": "Content marketing, education, storytelling",
+    "unlock_rank": "Expert",
+    "unlock_level": 1
+  },
+  {
+    "name": "SEO Pro",
+    "category": "Content & Creative",
+    "icon": "🔍",
+    "description": "SEO optimization and content strategy",
+    "spirits": [
+      "Researcher Spirit",
+      "Writer Spirit",
+      "Analyst Spirit",
+      "Communicator Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 50,
+    "conflict_penalty": 0,
+    "net_performance": 50,
+    "tools_count": 16,
+    "perfect_for": "Digital marketing, SEO, content optimization",
+    "unlock_rank": "Novice",
+    "unlock_level": 2
+  },
+  {
+    "name": "Marketing Master",
+    "category": "Content & Creative",
+    "icon": "📈",
+    "description": "Multi-channel marketing and campaign management",
+    "spirits": [
+      "Communicator Spirit",
+      "Creative Spirit",
+      "Analyst Spirit",
+      "Scheduler Spirit",
+      "Researcher Spirit"
+    ],
+    "synergy_bonus": 55,
+    "conflict_penalty": 0,
+    "net_performance": 55,
+    "tools_count": 20,
+    "perfect_for": "Digital marketing, campaign management, brand strategy",
+    "unlock_rank": "Skilled",
+    "unlock_level": 2
+  },
+  {
+    "name": "UI/UX Designer",
+    "category": "Content & Creative",
+    "icon": "🎨",
+    "description": "User interface and experience design",
+    "spirits": [
+      "Designer Spirit",
+      "Creative Spirit",
+      "Builder Spirit",
+      "Analyst Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 50,
+    "conflict_penalty": -5,
+    "net_performance": 45,
+    "tools_count": 18,
+    "perfect_for": "Web design, mobile apps, user experience optimization",
+    "unlock_rank": "Expert",
+    "unlock_level": 2
+  },
+  {
+    "name": "Research Analyst",
+    "category": "Data & Analysis",
+    "icon": "📊",
+    "description": "Data analysis and research",
+    "spirits": [
+      "Researcher Spirit",
+      "Analyst Spirit",
+      "Mathematician Spirit",
+      "Checker Spirit",
+      "Security Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 18,
+    "perfect_for": "Business intelligence, research, data science",
+    "unlock_rank": "Skilled",
+    "unlock_level": 2
+  },
+  {
+    "name": "Data Scientist",
+    "category": "Data & Analysis",
+    "icon": "🧮",
+    "description": "Advanced data analysis and machine learning",
+    "spirits": [
+      "Mathematician Spirit",
+      "Analyst Spirit",
+      "Builder Spirit",
+      "Researcher Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 55,
+    "conflict_penalty": 0,
+    "net_performance": 55,
+    "tools_count": 22,
+    "perfect_for": "Machine learning, statistical analysis, data engineering",
+    "unlock_rank": "Specialist",
+    "unlock_level": 3
+  },
+  {
+    "name": "Monitoring Specialist",
+    "category": "Data & Analysis",
+    "icon": "📊",
+    "description": "System monitoring and alerting",
+    "spirits": [
+      "DevOps Spirit",
+      "Analyst Spirit",
+      "Scheduler Spirit",
+      "Communicator Spirit",
+      "Security Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 16,
+    "perfect_for": "System monitoring, incident management, performance tracking",
+    "unlock_rank": "Specialist",
+    "unlock_level": 2
+  },
+  {
+    "name": "API Integration Specialist",
+    "category": "Integration & Automation",
+    "icon": "🌐",
+    "description": "API integration and system connectivity",
+    "spirits": [
+      "Connector Spirit",
+      "Builder Spirit",
+      "Debugger Spirit",
+      "Analyst Spirit",
+      "Security Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 19,
+    "perfect_for": "System integration, API development, microservices",
+    "unlock_rank": "Skilled",
+    "unlock_level": 3
+  },
+  {
+    "name": "Automation Expert",
+    "category": "Integration & Automation",
+    "icon": "🤖",
+    "description": "Process automation and workflow optimization",
+    "spirits": [
+      "Scheduler Spirit",
+      "Builder Spirit",
+      "Connector Spirit",
+      "Analyst Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 18,
+    "perfect_for": "Business process automation, workflow optimization",
+    "unlock_rank": "Skilled",
+    "unlock_level": 2
+  },
+  {
+    "name": "Swiss Army Knife",
+    "category": "Integration & Automation",
+    "icon": "⚡",
+    "description": "General-purpose problem solving",
+    "spirits": [
+      "Builder Spirit",
+      "Writer Spirit",
+      "Analyst Spirit",
+      "Connector Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 35,
+    "conflict_penalty": 0,
+    "net_performance": 35,
+    "tools_count": 20,
+    "perfect_for": "General assistance, prototyping, multi-task projects",
+    "unlock_rank": "Novice",
+    "unlock_level": 1
+  },
+  {
+    "name": "Startup Accelerator",
+    "category": "Integration & Automation",
+    "icon": "🚀",
+    "description": "Rapid development and business growth",
+    "spirits": [
+      "Builder Spirit",
+      "Communicator Spirit",
+      "Analyst Spirit",
+      "Creative Spirit",
+      "Scheduler Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": -5,
+    "net_performance": 40,
+    "tools_count": 22,
+    "perfect_for": "Startup development, rapid prototyping, business acceleration",
+    "unlock_rank": "Skilled",
+    "unlock_level": 2
+  },
+  {
+    "name": "Quality Assurance",
+    "category": "Quality & Security",
+    "icon": "✅",
+    "description": "Comprehensive quality assurance and testing",
+    "spirits": [
+      "Checker Spirit",
+      "Security Spirit",
+      "Analyst Spirit",
+      "Debugger Spirit",
+      "Communicator Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 17,
+    "perfect_for": "QA testing, security auditing, compliance",
+    "unlock_rank": "Specialist",
+    "unlock_level": 1
+  },
+  {
+    "name": "Security Specialist",
+    "category": "Quality & Security",
+    "icon": "🔒",
+    "description": "Cybersecurity and vulnerability assessment",
+    "spirits": [
+      "Security Spirit",
+      "Analyst Spirit",
+      "Debugger Spirit",
+      "Researcher Spirit",
+      "Checker Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 19,
+    "perfect_for": "Cybersecurity, penetration testing, security auditing",
+    "unlock_rank": "Specialist",
+    "unlock_level": 1
+  },
+  {
+    "name": "Business Consultant",
+    "category": "Specialized & Advanced",
+    "icon": "💼",
+    "description": "Business consulting and strategy",
+    "spirits": [
+      "Consultant Spirit",
+      "Analyst Spirit",
+      "Communicator Spirit",
+      "Scheduler Spirit",
+      "Educator Spirit"
+    ],
+    "synergy_bonus": 35,
+    "conflict_penalty": 0,
+    "net_performance": 35,
+    "tools_count": 12,
+    "perfect_for": "Business consulting, strategic planning, decision support",
+    "unlock_rank": "Master",
+    "unlock_level": 1
+  },
+  {
+    "name": "Educational Designer",
+    "category": "Specialized & Advanced",
+    "icon": "📚",
+    "description": "Educational content design and delivery",
+    "spirits": [
+      "Educator Spirit",
+      "Designer Spirit",
+      "Writer Spirit",
+      "Analyst Spirit",
+      "Communicator Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 15,
+    "perfect_for": "Online education, training development, instructional design",
+    "unlock_rank": "Expert",
+    "unlock_level": 2
+  },
+  {
+    "name": "Health & Wellness Coach",
+    "category": "Specialized & Advanced",
+    "icon": "🩺",
+    "description": "Health monitoring and wellness guidance",
+    "spirits": [
+      "Healer Spirit",
+      "Educator Spirit",
+      "Communicator Spirit",
+      "Scheduler Spirit",
+      "Analyst Spirit"
+    ],
+    "synergy_bonus": 35,
+    "conflict_penalty": 0,
+    "net_performance": 35,
+    "tools_count": 12,
+    "perfect_for": "Health coaching, wellness programs, medical information",
+    "unlock_rank": "Master",
+    "unlock_level": 2
+  },
+  {
+    "name": "Global Communicator",
+    "category": "Multi-Language & Global",
+    "icon": "🌍",
+    "description": "Multi-language communication and education",
+    "spirits": [
+      "Translator Spirit",
+      "Communicator Spirit",
+      "Writer Spirit",
+      "Researcher Spirit",
+      "Educator Spirit"
+    ],
+    "synergy_bonus": 45,
+    "conflict_penalty": 0,
+    "net_performance": 45,
+    "tools_count": 16,
+    "perfect_for": "International business, multilingual content, global education",
+    "unlock_rank": "Expert",
+    "unlock_level": 1
+  },
+  {
+    "name": "Cultural Bridge",
+    "category": "Multi-Language & Global",
+    "icon": "🌉",
+    "description": "Cross-cultural communication and adaptation",
+    "spirits": [
+      "Translator Spirit",
+      "Creative Spirit",
+      "Communicator Spirit",
+      "Researcher Spirit",
+      "Consultant Spirit"
+    ],
+    "synergy_bonus": 35,
+    "conflict_penalty": 0,
+    "net_performance": 35,
+    "tools_count": 14,
+    "perfect_for": "International relations, cultural consulting, global marketing",
+    "unlock_rank": "Master",
+    "unlock_level": 1
+  },
+  {
+    "name": "Brand Strategist",
+    "category": "Design & Creative",
+    "icon": "🎯",
+    "description": "Brand development and strategic communication",
+    "spirits": [
+      "Creative Spirit",
+      "Communicator Spirit",
+      "Analyst Spirit",
+      "Researcher Spirit",
+      "Consultant Spirit"
+    ],
+    "synergy_bonus": 55,
+    "conflict_penalty": 0,
+    "net_performance": 55,
+    "tools_count": 17,
+    "perfect_for": "Brand development, marketing strategy, creative direction",
+    "unlock_rank": "Master",
+    "unlock_level": 1
+  }
+]

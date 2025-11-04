@@ -496,6 +496,7 @@
 
 <script>
 import Icon from '../components/Icon.vue';
+import { API_ENDPOINTS } from '@/config/api';
 
 export default {
   name: 'AIRoomView',
@@ -606,17 +607,28 @@ export default {
   methods: {
     async loadAvailableAgents() {
       try {
-        const response = await fetch('http://localhost:5000/api/models');
-        const result = await response.json();
+        // Get both models and training jobs to show proper version names
+        const [modelsResponse, jobsResponse] = await Promise.all([
+          fetch(API_ENDPOINTS.v2.models),
+          fetch(API_ENDPOINTS.v2.trainingJobs)
+        ]);
         
-        if (result.success) {
-          this.availableAgents = result.models.map(model => ({
-            name: model.name,
-            capabilities: model.capabilities || ['General Purpose'],
-            parameters: model.parameters,
-            context_length: model.context_length,
-            avatar_url: model.avatar_url
-          }));
+        const modelsResult = await modelsResponse.json();
+        const jobsResult = await jobsResponse.json();
+        
+        if (modelsResult.success && jobsResult.success) {
+          this.availableAgents = modelsResult.models.map(model => {
+            const agent = {
+              name: model.name, // Display name (e.g., "kalsada:v1.0")
+              capabilities: model.capabilities || ['General Purpose'],
+              parameters: model.parameters,
+              context_length: model.context_length,
+              avatar_url: model.avatar_url,
+              ollamaName: model.ollama_name || model.name // Use ollama_name from backend, otherwise fallback to model.name
+            };
+            console.log(`🔍 Agent loaded: ${agent.name} -> ollamaName: ${agent.ollamaName}`);
+            return agent;
+          });
         }
       } catch (error) {
         console.error('Error loading agents:', error);
@@ -806,6 +818,16 @@ ${this.customTopic.description ? this.customTopic.description + '\n\n' : ''}${ca
       this.isGeneratingResponse = true;
       
       try {
+        // Find the agent object to get the Ollama name
+        const agent = this.availableAgents.find(a => a.name === agentName);
+        if (!agent) {
+          throw new Error(`Agent ${agentName} not found`);
+        }
+        
+        // Use the Ollama name for API calls
+        const ollamaModelName = agent.ollamaName || agentName;
+        console.log(`🔍 Agent found: ${agentName}, ollamaName: ${agent.ollamaName}, using: ${ollamaModelName}`);
+        
         // Get the last few messages for context
         const recentMessages = this.conversationHistory.slice(-3);
         const context = recentMessages.map(msg => `${msg.agent}: ${msg.text}`).join('\n');
@@ -820,11 +842,11 @@ ${this.customTopic.description ? this.customTopic.description + '\n\n' : ''}${ca
         
         prompt += `\n\nHere's the recent conversation:\n\n${context}\n\nRespond naturally and continue the discussion. If someone asked a question, try to answer it. If someone made a point, build on it or offer a different perspective. Keep your response conversational, helpful, and engaging. Don't repeat timeout messages or error responses.`;
         
-        console.log(`🤖 Generating response for ${agentName}...`);
+        console.log(`🤖 Generating response for ${agentName} (using Ollama model: ${ollamaModelName})...`);
         
         // Call the Ollama API with timeout (longer for large models)
         const controller = new AbortController();
-        const timeoutDuration = agentName.includes('12B') || agentName.includes('13B') ? 120000 : 60000; // 2 min for large models, 1 min for others
+        const timeoutDuration = ollamaModelName.includes('12B') || ollamaModelName.includes('13B') ? 120000 : 60000; // 2 min for large models, 1 min for others
         const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
         
         const response = await fetch('http://localhost:11434/api/generate', {
@@ -833,7 +855,7 @@ ${this.customTopic.description ? this.customTopic.description + '\n\n' : ''}${ca
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: agentName,
+            model: ollamaModelName,
             prompt: prompt,
             stream: false,
             options: {

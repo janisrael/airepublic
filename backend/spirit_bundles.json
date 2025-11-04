@@ -1,0 +1,144 @@
+[
+  {
+    "name": "Content Creator Bundle",
+    "description": "Complete content creation toolkit",
+    "spirits": [
+      "Writer Spirit",
+      "Creative Spirit",
+      "Translator Spirit",
+      "Designer Spirit"
+    ],
+    "original_price_usd": 18.96,
+    "bundle_price_usd": 12.99,
+    "savings_usd": 5.97,
+    "savings_percentage": 31,
+    "points_cost": 130,
+    "category": "Content & Creative",
+    "icon": "📝",
+    "popular": true
+  },
+  {
+    "name": "Developer Pro Bundle",
+    "description": "Full-stack development powerhouse",
+    "spirits": [
+      "Builder Spirit",
+      "Debugger Spirit",
+      "DevOps Spirit",
+      "Security Spirit",
+      "Analyst Spirit"
+    ],
+    "original_price_usd": 32.96,
+    "bundle_price_usd": 19.99,
+    "savings_usd": 12.97,
+    "savings_percentage": 39,
+    "points_cost": 200,
+    "category": "Development & Technical",
+    "icon": "💻",
+    "popular": true
+  },
+  {
+    "name": "Data Science Bundle",
+    "description": "Complete data analysis toolkit",
+    "spirits": [
+      "Analyst Spirit",
+      "Researcher Spirit",
+      "Mathematician Spirit",
+      "Checker Spirit"
+    ],
+    "original_price_usd": 16.97,
+    "bundle_price_usd": 11.99,
+    "savings_usd": 4.98,
+    "savings_percentage": 29,
+    "points_cost": 120,
+    "category": "Data & Analysis",
+    "icon": "📊",
+    "popular": false
+  },
+  {
+    "name": "Business Professional Bundle",
+    "description": "Business consulting and communication",
+    "spirits": [
+      "Consultant Spirit",
+      "Communicator Spirit",
+      "Scheduler Spirit",
+      "Analyst Spirit"
+    ],
+    "original_price_usd": 25.97,
+    "bundle_price_usd": 17.99,
+    "savings_usd": 7.98,
+    "savings_percentage": 31,
+    "points_cost": 180,
+    "category": "Business & Communication",
+    "icon": "💼",
+    "popular": false
+  },
+  {
+    "name": "Ultimate Creator Bundle",
+    "description": "Everything you need for content and design",
+    "spirits": [
+      "Writer Spirit",
+      "Creative Spirit",
+      "Designer Spirit",
+      "Translator Spirit",
+      "Educator Spirit"
+    ],
+    "original_price_usd": 32.96,
+    "bundle_price_usd": 19.99,
+    "savings_usd": 12.97,
+    "savings_percentage": 39,
+    "points_cost": 200,
+    "category": "Premium Creative",
+    "icon": "🎨",
+    "popular": true
+  },
+  {
+    "name": "Security Expert Bundle",
+    "description": "Complete security and compliance toolkit",
+    "spirits": [
+      "Security Spirit",
+      "Analyst Spirit",
+      "Debugger Spirit",
+      "Checker Spirit"
+    ],
+    "original_price_usd": 27.97,
+    "bundle_price_usd": 18.99,
+    "savings_usd": 8.98,
+    "savings_percentage": 32,
+    "points_cost": 190,
+    "category": "Security & Compliance",
+    "icon": "🔒",
+    "popular": false
+  },
+  {
+    "name": "Complete Collection",
+    "description": "All spirits - ultimate power user package",
+    "spirits": [
+      "Writer Spirit",
+      "Creative Spirit",
+      "Translator Spirit",
+      "Analyst Spirit",
+      "Researcher Spirit",
+      "Mathematician Spirit",
+      "Builder Spirit",
+      "Debugger Spirit",
+      "DevOps Spirit",
+      "Connector Spirit",
+      "Communicator Spirit",
+      "Scheduler Spirit",
+      "Checker Spirit",
+      "Security Spirit",
+      "Educator Spirit",
+      "Designer Spirit",
+      "Consultant Spirit",
+      "Healer Spirit"
+    ],
+    "original_price_usd": 142.86,
+    "bundle_price_usd": 79.99,
+    "savings_usd": 62.87,
+    "savings_percentage": 44,
+    "points_cost": 800,
+    "category": "Ultimate",
+    "icon": "🌟",
+    "popular": true
+  }
+]

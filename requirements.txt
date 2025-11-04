@@ -1,54 +1,63 @@
-# AI Refinement Dashboard Python Dependencies
-
-# Web Framework
+# AI Republic Dashboard - Professional Requirements
+# Core Framework
 Flask==3.0.0
 Flask-CORS==4.0.0
-flask-socketio==5.3.6
+Flask-SocketIO==5.3.6
+Flask-Caching==2.3.1
 
-# Database
-sqlite3  # Built-in with Python
+# Database & ORM
+SQLAlchemy==2.0.23
+alembic==1.13.1
+psycopg2-binary==2.9.9
 
-# Machine Learning & AI
-torch>=2.0.0
-transformers>=4.30.0
-datasets>=2.14.0
-peft>=0.5.0
-accelerate>=0.21.0
-bitsandbytes>=0.41.0
+# Redis & Caching
+redis==5.0.1
+cachelib==0.13.0
 
-# Vector Database
-chromadb>=0.4.0
+# Authentication & Security
+PyJWT==2.8.0
+Werkzeug==3.0.1
+bcrypt==4.1.2
+cryptography==41.0.8
+
+# API & HTTP
+requests==2.31.0
+httpx==0.25.2
+aiohttp==3.9.1
 
 # Data Processing
-numpy>=1.24.0
-pandas>=2.0.0
-scikit-learn>=1.3.0
-
-# HTTP Requests
-requests>=2.31.0
-
-# Image Processing
-Pillow>=10.0.0
-
-# Progress Bars
-tqdm>=4.65.0
-
-# Environment Management
-python-dotenv>=1.0.0
-
-# Development Tools
-pytest>=7.4.0
-black>=23.0.0
-flake8>=6.0.0
-
-# Logging
-colorlog>=6.7.0
+pandas==2.1.4
+numpy==1.26.2
+pydantic==2.5.2
 
 # File Handling
-Werkzeug>=2.3.0
+Pillow==10.1.0
+python-multipart==0.0.6
+python-docx==1.1.0
+pypdf>=5.1.0,<7
 
-# JSON Processing
-jsonschema>=4.17.0
+# Monitoring & Logging
+prometheus-client==0.19.0
+structlog==23.2.0
 
-# Date/Time
-python-dateutil>=2.8.0
+# Development Tools
+pytest==7.4.3
+pytest-cov==4.1.0
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
+pre-commit==3.6.0
+
+# Production
+gunicorn==21.2.0
+uvicorn==0.24.0
+supervisor==4.2.5
+
+# Environment Management
+python-dotenv==1.0.0
+
+# Optional: AI/ML Libraries
+# torch==2.1.1
+# transformers==4.36.2
+# chromadb==0.4.18
+# langchain==0.0.350

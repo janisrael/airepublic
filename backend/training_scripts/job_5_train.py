@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 def send_output_to_frontend(job_id, message):
     """Send output to frontend via API"""
     try:
-        requests.post(f'http://localhost:5000/api/training-jobs/{job_id}/output', 
+        requests.post(f'http://localhost:5001/api/training-jobs/{job_id}/output', 
                     json={
                         'output': message,
                         'timestamp': datetime.now().isoformat()
@@ -48,7 +48,7 @@ class ProgressCallback(TrainerCallback):
         if state.global_step % 5 == 0:  # Update every 5 steps
             try:
                 progress = 0.2 + (state.global_step / state.max_steps) * 0.6
-                requests.post(f'http://localhost:5000/api/training-jobs/{job_id}/progress', 
+                requests.post(f'http://localhost:5001/api/training-jobs/{job_id}/progress', 
                             json={
                                 'progress': progress,
                                 'current_step': state.global_step,
