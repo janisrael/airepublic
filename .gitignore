@@ -35,6 +35,12 @@ ENV/
 
 # Database
 backend/chromadb_data/
+backend/app/services/chromadb_data/
+
+# Large files
+*.deb
+*.bin
+docs/*.deb
 
 # Logs
 *.log
