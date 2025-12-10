@@ -123,20 +123,19 @@ jobs:
             echo "=== Disk space after cleanup ==="
             df -h
             echo ""
-            echo "=== Building with Docker BuildKit ==="
-            export DOCKER_BUILDKIT=1
-            export BUILDKIT_PROGRESS=plain
+            echo "=== Building Docker images ==="
             
             echo "Removing old airepubliq images..."
+            docker rmi airepubliq-backend:latest airepubliq-frontend:latest 2>/dev/null || true
             
             echo "Building backend Docker image..."
-            DOCKER_BUILDKIT=1 docker build -f backend/Dockerfile -t airepubliq-backend:latest . || {
+            docker build -f backend/Dockerfile -t airepubliq-backend:latest . || {
               echo "Backend Docker build failed"
               exit 1
             }
             
             echo "Building frontend Docker image..."
-            DOCKER_BUILDKIT=1 docker build -f frontend/Dockerfile -t airepubliq-frontend:latest . || {
+            docker build -f frontend/Dockerfile -t airepubliq-frontend:latest . || {
               echo "Frontend Docker build failed"
               exit 1
             }
