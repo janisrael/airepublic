@@ -55,20 +55,65 @@ The platform enables users to manage multiple AI models, create and train custom
 ## Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Backend V2    │    │   Database      │
-│   (Vue.js/Vite) │◄──►│   (Flask)       │◄──►│   (PostgreSQL)  │
-│   Port: 80      │    │   Port: 5001    │    │   Port: 5432    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                                ▼
-                       ┌─────────────────┐
-                       │      Redis      │
-                       │   Port: 6379    │
-                       └─────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         USER INTERFACE                                  │
+│                                                                         │
+│                    ┌──────────────────────┐                            │
+│                    │   Frontend (Vue.js)  │                            │
+│                    │   Nginx Static Files │                            │
+│                    │   Port: 80           │                            │
+│                    └──────────┬───────────┘                            │
+│                               │                                         │
+└───────────────────────────────┼─────────────────────────────────────────┘
+                                │ HTTP/HTTPS                                
+                                │                                           
+┌───────────────────────────────▼─────────────────────────────────────────┐
+│                         API LAYER                                       │
+│                                                                         │
+│                    ┌──────────────────────┐                            │
+│                    │   Backend (Flask)    │                            │
+│                    │   Port: 5001        │                            │
+│                    │   Flask-SocketIO     │                            │
+│                    └───────┬──────────────┘                            │
+│                            │                                             │
+└────────────────────────────┼─────────────────────────────────────────────┘
+                             │                                               
+        ┌────────────────────┼────────────────────┐                          
+        │                    │                    │                          
+        ▼                    ▼                    ▼                          
+┌──────────────┐   ┌──────────────┐   ┌──────────────┐                      
+│  PostgreSQL  │   │    Redis     │   │  ChromaDB    │                      
+│  Port: 5432  │   │  Port: 6379  │   │  Vector DB   │                      
+│              │   │              │   │              │                      
+│  • Users     │   │  • Sessions  │   │  • RAG Data  │                      
+│  • Models    │   │  • Cache     │   │  • Embeddings│                      
+│  • Training  │   │  • Rate Limit│   │              │                      
+│  • Minions   │   │              │   │              │                      
+│  • Spirits   │   │              │   │              │                      
+└──────────────┘   └──────────────┘   └──────────────┘                      
+                                                                             
+┌─────────────────────────────────────────────────────────────────────────┐
+│                    EXTERNAL SERVICES                                    │
+│                                                                         │
+│  • Ollama (Local LLM)      • OpenAI API      • Anthropic API          │
+│  • NVIDIA NIM               • HuggingFace     • RunPod (GPU Training)  │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 
-## Technology Stack
+### Component Details
+
+**Frontend**: Vue.js application built with Vite, served via Nginx in production. Provides user interface for managing models, training jobs, datasets, and minions.
+
+**Backend**: Flask REST API with WebSocket support (Flask-SocketIO) for real-time updates. Handles authentication, model management, training orchestration, and minion/spirit operations.
+
+**PostgreSQL**: Primary relational database storing users, models, training jobs, datasets, minions, spirits, and system metadata.
+
+**Redis**: Caching layer and session storage. Also used for rate limiting and real-time data.
+
+**ChromaDB**: Vector database for RAG (Retrieval Augmented Generation) functionality, storing embeddings and enabling semantic search.
+
+**External Services**: Integration with various AI model providers and cloud GPU services for training and inference.
+
 
 ### Backend
 - Python 3.11
