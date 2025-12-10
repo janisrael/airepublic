@@ -112,15 +112,31 @@ jobs:
             cd airepubliq-build
             tar -xzf /tmp/airepubliq-source.tar.gz
             rm /tmp/airepubliq-source.tar.gz
+
+            echo "=== Checking disk space before build ==="
+            df -h
+            echo ""
+            echo "=== Cleaning up Docker resources ==="
+            docker system prune -af --volumes || true
+            docker builder prune -af || true
+            echo ""
+            echo "=== Disk space after cleanup ==="
+            df -h
+            echo ""
+            echo "=== Building with Docker BuildKit ==="
+            export DOCKER_BUILDKIT=1
+            export BUILDKIT_PROGRESS=plain
+            
+            echo "Removing old airepubliq images..."
             
             echo "Building backend Docker image..."
-            docker build -f backend/Dockerfile -t airepubliq-backend:latest . || {
+            DOCKER_BUILDKIT=1 docker build -f backend/Dockerfile -t airepubliq-backend:latest . || {
               echo "Backend Docker build failed"
               exit 1
             }
             
             echo "Building frontend Docker image..."
-            docker build -f frontend/Dockerfile -t airepubliq-frontend:latest . || {
+            DOCKER_BUILDKIT=1 docker build -f frontend/Dockerfile -t airepubliq-frontend:latest . || {
               echo "Frontend Docker build failed"
               exit 1
             }
@@ -134,6 +150,10 @@ jobs:
               echo "Frontend image import failed"
               exit 1
             }
+            
+            echo "Cleaning up Docker images after import..."
+            docker rmi airepubliq-backend:latest airepubliq-frontend:latest 2>/dev/null || true
+            docker system prune -f || true
             
             echo "Applying Kubernetes manifests..."
             if [ ! -d "/tmp/airepubliq-k8s" ]; then
