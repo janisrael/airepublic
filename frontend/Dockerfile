@@ -2,7 +2,7 @@
 # Multi-stage build for production optimization
 
 # Stage 1: Build stage
-FROM node:18-alpine as builder
+FROM node:20-alpine as builder
 
 # Set working directory
 WORKDIR /app
