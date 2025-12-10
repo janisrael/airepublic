@@ -1,6 +1,6 @@
 # AI Republic Dashboard
 
-Professional AI Model Management Platform - Enterprise Grade
+AI Model Management Platform - In Development
 
 **Deployment**: Automated CI/CD via GitHub Actions to Hetzner Kubernetes | Last updated: 2025-01-08
 
@@ -8,7 +8,7 @@ Professional AI Model Management Platform - Enterprise Grade
 
 ## Overview
 
-AI Republic Dashboard is a professional-grade platform for managing AI models, training pipelines, and deployment workflows. Built with modern architecture principles, it supports both local and cloud-based AI models with enterprise-grade performance and scalability.
+AI Republic Dashboard is a platform for managing AI models, training pipelines, and deployment workflows. Built with modern architecture principles, it supports both local and cloud-based AI models with performance and scalability.
 
 The platform enables users to manage multiple AI models, create and train custom models using LoRA fine-tuning, organize datasets, and deploy AI agents (Minions) with specialized capabilities (Spirits) for various tasks.
 
@@ -33,7 +33,7 @@ The platform enables users to manage multiple AI models, create and train custom
 - Level System: Minions gain experience and unlock new capabilities
 - Spirit System: Dynamic AI agent configurations with specialized tools
 
-### Enterprise Features
+### Advanced Features
 - Authentication & Authorization: JWT-based authentication with role-based access control (RBAC)
 - User Management: Comprehensive user profiles, avatars, and preferences
 - Session Management: Redis-backed secure session handling
