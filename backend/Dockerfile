@@ -23,7 +23,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy requirements and install Python dependencies
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Production stage
@@ -52,7 +52,6 @@ WORKDIR /app
 
 # Copy application code
 COPY backend/ ./backend/
-COPY .env ./
 
 # Change ownership to appuser
 RUN chown -R appuser:appuser /app
